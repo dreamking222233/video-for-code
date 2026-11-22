@@ -43,7 +43,7 @@
     "created": "2026-11-21 07:01",
     "note": "旧参考(SNR21dB)训练；vo_clone_* 系列音频由它生成，保留以便复现"
   },
-  "_default": "cosy_v2",
+  "_default": "qwen_v2_24",
   "cosy_v2_24": {
     "model": "cosyvoice-v3.5-plus",
     "voice_id": "cosyvoice-v3.5-plus-dshv24-fbaf5e5f3f8044cfbce657fb13464e41",

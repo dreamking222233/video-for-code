@@ -1,0 +1,45 @@
+{
+  "voice": "qwen_v2_24",
+  "model": "qwen-audio-3.1-tts-plus",
+  "rate": 1.45,
+  "gap": 0.22,
+  "total": 92.22,
+  "marks": [
+    {
+      "id": "s1_hook",
+      "start": 0.0,
+      "end": 12.2,
+      "dur": 12.2
+    },
+    {
+      "id": "s2_indo",
+      "start": 12.42,
+      "end": 28.42,
+      "dur": 16.0
+    },
+    {
+      "id": "s3_cost",
+      "start": 28.64,
+      "end": 47.91,
+      "dur": 19.27
+    },
+    {
+      "id": "s4_why",
+      "start": 48.13,
+      "end": 60.52,
+      "dur": 12.39
+    },
+    {
+      "id": "s5_codedeck",
+      "start": 60.74,
+      "end": 75.08,
+      "dur": 14.34
+    },
+    {
+      "id": "s6_features",
+      "start": 75.3,
+      "end": 92.22,
+      "dur": 16.92
+    }
+  ]
+}
