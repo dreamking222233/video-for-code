@@ -5,6 +5,34 @@
 配音：`cosy_v2`（`cosyvoice-v3.5-plus` / `voice_id: cosyvoice-v3.5-plus-dshv2-de51050804324850ad05118b2b3cde4d`）
 旁白：`audio/clone/*.wav` 逐镜生成（`audio/make_vo.py`，音色 `qwen_v2_24`，rate 1.36，5.28 字/秒），拼接为 `vo_clone.wav` → 降噪 `vo_clean.wav`
 
+## 两种画幅
+
+| 文件 | 规格 | 用途 |
+|---|---|---|
+| `out/final.mp4` | 1920×1080 · 97.47s | 横屏（B 站 / 公众号 / 网站） |
+| `out/final_9x16.mp4` | 1080×1920 · 97.47s | 竖屏（抖音 / 视频号 / 小红书视频） |
+| `out/cover_9x16.png` / `.jpg` | 1080×1920 | 抖音封面（= 竖屏视频最后一帧） |
+
+竖屏由同一份时间轴生成，只是换了一套版式层（`build_html.py --vertical`）：
+
+```bash
+$PY build_html.py --vertical        # → index_vertical.html
+$PY /Volumes/文件/自媒体/.agents/skills/code-video-studio/scripts/render.py \
+   index_vertical.html out/final_9x16.mp4 --size 1080x1920 --fps 30 \
+   --duration 97.483 --audio audio/mix_norm.wav
+
+# 封面 = 最后一帧
+ffmpeg -y -sseof -0.06 -i out/final_9x16.mp4 -frames:v 1 -update 1 out/cover_9x16.png
+```
+
+竖屏版式（`VERTICAL_CSS` + `HOOKS_HTML` + `VERTICAL_JS` 三个常量，都在 `build_html.py` 里）：
+
+- 顶栏压缩：只留 Logo + CodeDeck + 章节胶囊 + 6 段进度条（剧集标题与时间码隐藏）
+- 上半区：每镜一句「钩子大字」（120px）+ 一行副标题（64px）
+- 中部：把整套 16:9 场景 `scale(0.60)` 后放进舞台（1728×812 → 1037×487），动效原样保留
+- 舞台下：三枚关键词胶囊（35px）
+- 底部：字幕放大到 46px 并上移到 `bottom:452px`，避开抖音右侧按钮列与底部文案区
+
 ## 三种改法，选一条走
 
 ### A. 只换旁白（已有 `vo_v2_matched_91s78.wav`，不重新合成）★ 当前成片用的就是这条

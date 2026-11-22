@@ -178,6 +178,96 @@ PHONE_HERO = phone("hero-phone", 12, "hero-notif", "任务完成", "给登录页
                    '<div><span class="ok">●</span><span class="p">0 errors, 0 warnings</span></div></div></div>')
 
 
+
+# =====================================================================
+#  9:16 竖屏（抖音）覆盖层
+#    舞台复用同一套 16:9 场景，整块 scale 0.625 后居中；上方加大字钩子，
+#    下方加关键词条与放大字幕；顶栏压缩（去掉剧集标题与时间码）。
+# =====================================================================
+VERTICAL_CSS = r"""
+html,body{width:1080px;height:1920px}
+#viewport{width:1080px;height:1920px}
+#bg-grid{background-size:36px 36px}
+
+/* ---- 顶栏压缩 ---- */
+#topbar{left:44px;right:44px;top:40px;height:80px}
+.tb-brand g td,.tb-brand b{font-size:34px}
+.tb-brand b{font-size:34px}
+.tb-sep,.tb-ep{display:none}
+.tb-right{gap:14px}
+.tb-chap{font-size:25px;padding:10px 20px 10px 18px}
+.tb-prog{width:200px;gap:6px}
+#tb-tc{display:none}
+
+/* ---- 钩子大字 ---- */
+#hooks{position:absolute;left:56px;right:56px;top:176px;height:400px;z-index:25}
+.hook{position:absolute;left:0;right:0;top:0;display:none;will-change:auto}
+.hook .h1{display:block;font-size:120px;line-height:1.0;font-weight:800;letter-spacing:-.045em;color:var(--ink)}
+.hook .h2{display:block;margin-top:24px;font-size:64px;line-height:1.18;font-weight:700;color:var(--muted)}
+.hook .h1 em{font-style:normal;color:var(--claude)}
+.hook .h1 b{color:var(--accent-ink)}
+
+/* ---- 16:9 舞台整块缩放：1728x812 -> 1080x507.5 ---- */
+#stagewrap{position:absolute;left:22px;top:636px;width:1728px;height:856px;
+  transform:scale(.60);transform-origin:0 0;overflow:hidden;z-index:10;
+  background:var(--paper);border-radius:34px;
+  box-shadow:0 34px 64px -34px rgba(24,24,27,.3),0 0 0 1px rgba(24,24,27,.07)}
+#stagewrap .scene{left:96px;top:0}
+
+/* ---- 关键词条 ---- */
+#vchips{position:absolute;left:56px;right:56px;top:1200px;display:flex;flex-wrap:wrap;gap:16px;z-index:25}
+#vchips span{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:999px;
+  background:#fff;border:1px solid var(--rule);font-size:35px;font-weight:600;color:var(--ink-soft);
+  box-shadow:0 10px 24px -18px rgba(24,24,27,.35)}
+#vchips i{width:11px;height:11px;border-radius:50%;background:var(--accent)}
+
+/* ---- 字幕放大、抬到抖音安全区之上 ---- */
+#subbar{bottom:452px}
+#sub-pill{max-width:900px;padding:18px 38px 20px;border-radius:24px;font-size:46px;line-height:1.3;text-wrap:balance}
+
+/* 右贴边的浮标会超出舞台，往里挪 */
+#stagewrap #fb-2{right:auto!important;left:1240px!important}
+
+/* 竖屏不需要鼠标指针（坐标是按 16:9 算的） */
+#cursor{display:none!important}
+"""
+
+HOOKS_HTML = """
+<div id="hooks">
+  <div class="hook"><span class="h1">800 层风控</span><span class="h2">被一辆小摩托破防</span></div>
+  <div class="hook"><span class="h1">骑 <b>1500</b> 公里</span><span class="h2">进村当面过实名</span></div>
+  <div class="hook"><span class="h1">每月 <em>¥2500+</em></span><span class="h2">只为跑个 Claude</span></div>
+  <div class="hook"><span class="h1">视频也是它做的</span><span class="h2">代码、配音、成片全自动</span></div>
+  <div class="hook"><span class="h1">每月几十块</span><span class="h2">不用租实体 Mac mini</span></div>
+  <div class="hook"><span class="h1"><b>12ms</b> 直连</span><span class="h2">合盖照跑 · 凭据自持</span></div>
+</div>
+<div id="vchips"><span><i></i><b id="vc0"></b></span><span><i></i><b id="vc1"></b></span><span><i></i><b id="vc2"></b></span></div>
+"""
+
+VERTICAL_JS = r"""
+// ---------- 9:16 竖屏：钩子大字 + 关键词条 跟随镜头切换 ----------
+const V_CHIPS = [
+  ["锁 IP", "查指纹", "人脸核身"],
+  ["进村打款", "现场实名", "白板合影"],
+  ["Mac mini $159", "Max $360", "Ultra $520"],
+  ["读全库", "跑测试", "剪视频"],
+  ["独立公网 IP", "审批隔离", "免租实体机"],
+  ["五地节点", "7×24 守护", "凭据自持"]
+];
+const vHooks = Array.from(document.querySelectorAll('#hooks .hook'));
+const vChips = [0, 1, 2].map(i => document.getElementById('vc' + i));
+window.__vUpdate = function (i, lt) {
+  const s = smoothstep(0, 0.45, lt);
+  vHooks.forEach((h, k) => {
+    if (k !== i) { h.style.display = 'none'; return; }
+    h.style.display = 'block';
+    h.style.opacity = clamp(s * 1.5, 0, 1);
+    h.style.transform = `translateY(${(1 - s) * 30}px)`;
+  });
+  V_CHIPS[i].forEach((t, k) => { if (vChips[k]) vChips[k].textContent = t; });
+};
+"""
+
 HTML_TEMPLATE = r"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -645,6 +735,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
 #sub-pill{max-width:1640px;padding:12px 34px 13px;border-radius:18px;background:rgba(24,24,27,.92);color:#fafafa;font-size:34px;font-weight:600;line-height:1.35;letter-spacing:.01em;text-align:center;box-shadow:0 24px 48px -24px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.07)}
 #sub-pill .sub-hl{color:#6ee7b7}
 #sub-pill .sub-warn{color:#fcd34d}
+__VERTICAL_CSS__
 </style>
 </head>
 <body>
@@ -702,7 +793,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
   <div id="bg-grid"></div>
 
   <div id="topbar">
-    <div class="tb-brand">__LOGO__<b>CodeDeck</b><span class="tb-sep"></span><span class="tb-ep">EP01 · 如何在国内稳定使用 Claude</span></div>
+    <div class="tb-brand">__LOGO__<b>CodeDeck</b><span class="tb-sep"></span><span class="tb-ep">如何在国内稳定使用 Claude</span></div>
     <div class="tb-right">
       <span class="tb-chap"><i class="pip"></i><span id="tb-chap">01 · 风控破防</span></span>
       <div class="tb-prog"><div class="tb-seg"><i id="pf-0"></i></div><div class="tb-seg"><i id="pf-1"></i></div><div class="tb-seg"><i id="pf-2"></i></div><div class="tb-seg"><i id="pf-3"></i></div><div class="tb-seg"><i id="pf-4"></i></div><div class="tb-seg"><i id="pf-5"></i></div></div>
@@ -710,6 +801,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
     </div>
   </div>
 
+  __STAGEWRAP_OPEN__
   <!-- ===================== 01 风控 vs 小摩托 ===================== -->
   <div class="scene" id="scene-1">
     <div class="s1-head">
@@ -945,6 +1037,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
 
     <svg id="cursor" viewBox="0 0 36 36"><path d="M7 4.5 L28.5 16 L18.5 19 L23.5 29.5 L19 31.5 L14 21 L7 27 Z" fill="#18181B" stroke="#FFFFFF" stroke-width="2.4" stroke-linejoin="round"/></svg>
   </div>
+  __STAGEWRAP_CLOSE__
 
   <div id="subbar"><div id="sub-pill"></div></div>
 </div>
@@ -1429,6 +1522,7 @@ window.render = function (t) {
   let idx = SCN.length - 1;
   for (let i = 0; i < SCN.length; i++) { const end = i === SCN.length - 1 ? DURATION + 1 : SCN[i + 1].start; if (t >= SCN[i].start - 1e-6 && t < end) { idx = i; break; } }
   $('tb-chap').textContent = CHAPTERS[idx];
+  if (window.__vUpdate) window.__vUpdate(idx, t - SCN[idx].start);
   for (let i = 0; i < SCN.length; i++) $(`pf-${i}`).style.width = `${(clamp((t - SCN[i].start) / Math.max(.001, SCN[i].end - SCN[i].start), 0, 1) * 100).toFixed(1)}%`;
   let sub = ''; for (const s of SUBS) if (t >= s[0] && t <= s[1]) { sub = s[2]; break; }
   const pill = $('sub-pill'); pill.style.display = sub ? '' : 'none'; if (sub && pill.innerHTML !== sub) pill.innerHTML = sub;
@@ -1449,6 +1543,7 @@ Promise.all([
     requestAnimationFrame(loop);
   }
 });
+__VERTICAL_JS__
 </script>
 </body>
 </html>
@@ -1468,7 +1563,7 @@ def highlight(txt: str) -> str:
     return esc.replace("CodeDeck", '<span class="sub-hl">CodeDeck</span>')
 
 
-subs = [[round(a, 3), round(b, 3), highlight(c)] for a, b, c in tl["subs"]]
+subs = [[round(a, 3), round(b, 3), highlight(c.lstrip("，、；："))] for a, b, c in tl["subs"]]
 scenes = [{"id": x["id"], "start": round(x["start"], 3), "end": round(x["end"], 3)} for x in tl["scenes"]]
 tl_js = json.dumps({"total": total, "vo_end": tl.get("vo_end", scenes[-1]["end"]), "scenes": scenes, "subs": subs},
                    ensure_ascii=False)
@@ -1488,11 +1583,25 @@ html = (html.replace("__B64_INDO__", b64_indo)
             .replace("__TIMELINE_JSON__", tl_js)
             .replace("__DURATION_LABEL__", dur_label))
 
+import sys
+VERTICAL = "--vertical" in sys.argv
+if VERTICAL:
+    html = (html.replace("__STAGEWRAP_OPEN__", '<div id="stagewrap">')
+                .replace("__STAGEWRAP_CLOSE__", '</div>')
+                .replace("__VERTICAL_CSS__", VERTICAL_CSS)
+                .replace("__HOOKS__", "")
+                .replace("__VERTICAL_JS__", VERTICAL_JS))
+    html = html.replace('<div id="topbar">', HOOKS_HTML + '\n  <div id="topbar">', 1)
+else:
+    html = (html.replace("__STAGEWRAP_OPEN__", "").replace("__STAGEWRAP_CLOSE__", "")
+                .replace("__VERTICAL_CSS__", "").replace("__HOOKS__", "")
+                .replace("__VERTICAL_JS__", ""))
+
 leftover = re.findall(r"__[A-Z0-9_]+__", html)
 assert not leftover, f"未替换的占位符：{sorted(set(leftover))}"
 # 红线：不允许出现网址/域名
 assert not re.search(r"https?://|www\.|codedeck\.top|[A-Za-z0-9-]\.(?:com|cn|net|io)\b", html), "页面里出现了网址或域名"
 
-out_file = ROOT / "index.html"
+out_file = ROOT / ("index_vertical.html" if VERTICAL else "index.html")
 out_file.write_text(html, encoding="utf-8")
 print(f"Wrote {out_file} ({len(html) / 1024:.1f} KB) · {total}s · {len(scenes)} scenes · {len(subs)} subs")

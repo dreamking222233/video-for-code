@@ -465,6 +465,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
 #sub-pill{max-width:1640px;padding:12px 34px 13px;border-radius:18px;background:rgba(24,24,27,.92);color:#fafafa;font-size:34px;font-weight:600;line-height:1.35;letter-spacing:.01em;text-align:center;box-shadow:0 24px 48px -24px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.07)}
 #sub-pill .sub-hl{color:#6ee7b7}
 #sub-pill .sub-warn{color:#fcd34d}
+
 </style>
 </head>
 <body>
@@ -522,7 +523,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
   <div id="bg-grid"></div>
 
   <div id="topbar">
-    <div class="tb-brand"><svg class="logo" viewBox="0 0 64 64"><use href="#cd-logo"/></svg><b>CodeDeck</b><span class="tb-sep"></span><span class="tb-ep">EP01 · 如何在国内稳定使用 Claude</span></div>
+    <div class="tb-brand"><svg class="logo" viewBox="0 0 64 64"><use href="#cd-logo"/></svg><b>CodeDeck</b><span class="tb-sep"></span><span class="tb-ep">如何在国内稳定使用 Claude</span></div>
     <div class="tb-right">
       <span class="tb-chap"><i class="pip"></i><span id="tb-chap">01 · 风控破防</span></span>
       <div class="tb-prog"><div class="tb-seg"><i id="pf-0"></i></div><div class="tb-seg"><i id="pf-1"></i></div><div class="tb-seg"><i id="pf-2"></i></div><div class="tb-seg"><i id="pf-3"></i></div><div class="tb-seg"><i id="pf-4"></i></div><div class="tb-seg"><i id="pf-5"></i></div></div>
@@ -530,6 +531,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
     </div>
   </div>
 
+  
   <!-- ===================== 01 风控 vs 小摩托 ===================== -->
   <div class="scene" id="scene-1">
     <div class="s1-head">
@@ -908,6 +910,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#F3F3EF;color:va
 
     <svg id="cursor" viewBox="0 0 36 36"><path d="M7 4.5 L28.5 16 L18.5 19 L23.5 29.5 L19 31.5 L14 21 L7 27 Z" fill="#18181B" stroke="#FFFFFF" stroke-width="2.4" stroke-linejoin="round"/></svg>
   </div>
+  
 
   <div id="subbar"><div id="sub-pill"></div></div>
 </div>
@@ -959,7 +962,7 @@ function reveal(el, lt, at) { // 从下往上露出（父级 .swap 裁切）
 function rectIn(el, host) { const a = el.getBoundingClientRect(), b = host.getBoundingClientRect(); return { x: a.left - b.left, y: a.top - b.top, w: a.width, h: a.height }; }
 
 // ============ 时间轴（构建时由 audio/vo_timeline.json 注入） ============
-const TL = {"total": 97.483, "vo_end": 94.883, "scenes": [{"id": "s1_hook", "start": 0.0, "end": 12.734}, {"id": "s2_indo", "start": 13.014, "end": 28.16}, {"id": "s3_cost", "start": 28.44, "end": 48.629}, {"id": "s4_why", "start": 48.909, "end": 61.232}, {"id": "s5_codedeck", "start": 61.512, "end": 76.398}, {"id": "s6_features", "start": 76.678, "end": 94.883}], "subs": [[0.0, 1.273, "家人们谁懂啊！"], [1.273, 5.457, "Anthropic连夜写了<span class=\"sub-warn\">八百层</span>风控，锁IP"], [5.457, 8.914, "、查指纹、人脸核身，防得跟五角大楼似的！"], [8.914, 13.014, "结果被咱们中国老哥一辆小摩托，物理破防了！"], [13.014, 13.762, "真事儿！"], [13.762, 17.876, "有人从巴厘岛骑摩托<span class=\"sub-warn\">一千五百公里</span>杀进苏门答腊"], [17.876, 21.802, "，进村当面打款、现场过实名，还举着白板合影。"], [21.802, 25.355, "最离谱的是村口大妈，一辈子没见过代码"], [25.355, 28.44, "，名下竟挂着<span class=\"sub-warn\">三个</span>Claude号！"], [28.44, 32.515, "笑归笑，国内想稳用Claude，代价真不小。"], [32.515, 35.293, "你看我这做海外部署的代理朋友"], [35.293, 38.071, "，单租一台海外Mac mini"], [38.071, 41.776, "，一个月就要<span class=\"sub-warn\">159美金</span>，折合一千零六十块。"], [41.776, 43.998, "再开Max要<span class=\"sub-warn\">360美金</span>"], [43.998, 47.703, "，Ultra更是<span class=\"sub-warn\">520美金</span>。一个月<span class=\"sub-warn\">两三千</span>"], [47.703, 48.909, "，谁顶得住？"], [48.909, 51.305, "可为啥非用Claude不可？"], [51.305, 54.386, "因为它不光能通读项目、写代码跑测试"], [54.386, 58.151, "，还能直接做视频、剪视频。不瞒你说，这条视频"], [58.151, 61.512, "，就是Claude帮我写代码做出来的！"], [61.512, 65.606, "但本地挂代理容易断连封号，合上电脑任务就停。"], [65.606, 72.118, "所以我做了<span class=\"sub-hl\">CodeDeck</span>——不用花上千块租海外实体Mac mini"], [72.118, 76.678, "，每个月<span class=\"sub-warn\">几十块</span>，就能有同样稳定的海外独立服务器。"], [76.678, 81.587, "新加坡直连低至<span class=\"sub-warn\">12毫秒</span>，桌面端、浏览器一键连上。"], [81.587, 86.292, "每一步操作由你审批，合上电脑长任务照样通宵跑"], [86.292, 90.997, "，代码和凭据全留在你自己的服务器上。每月<span class=\"sub-warn\">几十块</span>"], [90.997, 94.883, "，给Claude安个稳如泰山的海外工位！"]]};
+const TL = {"total": 97.483, "vo_end": 94.883, "scenes": [{"id": "s1_hook", "start": 0.0, "end": 12.734}, {"id": "s2_indo", "start": 13.014, "end": 28.16}, {"id": "s3_cost", "start": 28.44, "end": 48.629}, {"id": "s4_why", "start": 48.909, "end": 61.232}, {"id": "s5_codedeck", "start": 61.512, "end": 76.398}, {"id": "s6_features", "start": 76.678, "end": 94.883}], "subs": [[0.0, 1.273, "家人们谁懂啊！"], [1.273, 5.457, "Anthropic连夜写了<span class=\"sub-warn\">八百层</span>风控，锁IP"], [5.457, 8.914, "查指纹、人脸核身，防得跟五角大楼似的！"], [8.914, 13.014, "结果被咱们中国老哥一辆小摩托，物理破防了！"], [13.014, 13.762, "真事儿！"], [13.762, 17.876, "有人从巴厘岛骑摩托<span class=\"sub-warn\">一千五百公里</span>杀进苏门答腊"], [17.876, 21.802, "进村当面打款、现场过实名，还举着白板合影。"], [21.802, 25.355, "最离谱的是村口大妈，一辈子没见过代码"], [25.355, 28.44, "名下竟挂着<span class=\"sub-warn\">三个</span>Claude号！"], [28.44, 32.515, "笑归笑，国内想稳用Claude，代价真不小。"], [32.515, 35.293, "你看我这做海外部署的代理朋友"], [35.293, 38.071, "单租一台海外Mac mini"], [38.071, 41.776, "一个月就要<span class=\"sub-warn\">159美金</span>，折合一千零六十块。"], [41.776, 43.998, "再开Max要<span class=\"sub-warn\">360美金</span>"], [43.998, 47.703, "Ultra更是<span class=\"sub-warn\">520美金</span>。一个月<span class=\"sub-warn\">两三千</span>"], [47.703, 48.909, "谁顶得住？"], [48.909, 51.305, "可为啥非用Claude不可？"], [51.305, 54.386, "因为它不光能通读项目、写代码跑测试"], [54.386, 58.151, "还能直接做视频、剪视频。不瞒你说，这条视频"], [58.151, 61.512, "就是Claude帮我写代码做出来的！"], [61.512, 65.606, "但本地挂代理容易断连封号，合上电脑任务就停。"], [65.606, 72.118, "所以我做了<span class=\"sub-hl\">CodeDeck</span>——不用花上千块租海外实体Mac mini"], [72.118, 76.678, "每个月<span class=\"sub-warn\">几十块</span>，就能有同样稳定的海外独立服务器。"], [76.678, 81.587, "新加坡直连低至<span class=\"sub-warn\">12毫秒</span>，桌面端、浏览器一键连上。"], [81.587, 86.292, "每一步操作由你审批，合上电脑长任务照样通宵跑"], [86.292, 90.997, "代码和凭据全留在你自己的服务器上。每月<span class=\"sub-warn\">几十块</span>"], [90.997, 94.883, "给Claude安个稳如泰山的海外工位！"]]};
 const SCN = TL.scenes, SUBS = TL.subs, DURATION = TL.total;
 const VO_END = TL.vo_end ?? SCN[SCN.length - 1].end;
 const CHAPTERS = ['01 · 风控破防', '02 · 下乡收号', '03 · 算一笔账', '04 · 为什么是 Claude', '05 · CodeDeck 登场', '06 · 开机即用'];
@@ -1392,6 +1395,7 @@ window.render = function (t) {
   let idx = SCN.length - 1;
   for (let i = 0; i < SCN.length; i++) { const end = i === SCN.length - 1 ? DURATION + 1 : SCN[i + 1].start; if (t >= SCN[i].start - 1e-6 && t < end) { idx = i; break; } }
   $('tb-chap').textContent = CHAPTERS[idx];
+  if (window.__vUpdate) window.__vUpdate(idx, t - SCN[idx].start);
   for (let i = 0; i < SCN.length; i++) $(`pf-${i}`).style.width = `${(clamp((t - SCN[i].start) / Math.max(.001, SCN[i].end - SCN[i].start), 0, 1) * 100).toFixed(1)}%`;
   let sub = ''; for (const s of SUBS) if (t >= s[0] && t <= s[1]) { sub = s[2]; break; }
   const pill = $('sub-pill'); pill.style.display = sub ? '' : 'none'; if (sub && pill.innerHTML !== sub) pill.innerHTML = sub;
@@ -1412,6 +1416,7 @@ Promise.all([
     requestAnimationFrame(loop);
   }
 });
+
 </script>
 </body>
 </html>
