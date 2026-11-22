@@ -1,0 +1,1462 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1080, height=1920, initial-scale=1.0" />
+<title>《八百关卡的云瘾》· 克劳德动画 MV</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background: #14172b;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+  #stage {
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+  }
+  #cv {
+    position: absolute;
+    inset: 0;
+    width: 1080px;
+    height: 1920px;
+    display: block;
+  }
+
+  /* 顶部歌名与播放律动条（严格避开 iPhone 刘海与抖音「选择音乐」：top: 220px, left/right: 120px） */
+  #top-hud {
+    position: absolute;
+    left: 120px;
+    right: 120px;
+    top: 218px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .song-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    background: rgba(20, 22, 34, 0.58);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    color: #FAFAF8;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(8px);
+  }
+  .song-pill .eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 20px;
+  }
+  .song-pill .eq i {
+    display: block;
+    width: 4px;
+    border-radius: 2px;
+    background: #F4A261;
+  }
+  .mood-pill {
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: rgba(20, 22, 34, 0.50);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.92);
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 21px;
+    font-weight: 700;
+  }
+
+  /* 副歌情绪大标题浮层（位于星球上方安全区 y: 310..440） */
+  #hero-banner {
+    position: absolute;
+    left: 118px;
+    right: 118px;
+    top: 306px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 18;
+    opacity: 0;
+  }
+  #hero-banner .hb-main {
+    display: inline-block;
+    font-size: 74px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    color: #FFFFFF;
+    text-shadow: 0 8px 28px rgba(15, 16, 30, 0.55), 0 2px 0 rgba(15, 16, 30, 0.85);
+  }
+  #hero-banner .hb-sub {
+    margin-top: 8px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #FDE68A;
+    text-shadow: 0 4px 16px rgba(15, 16, 30, 0.7);
+  }
+
+  /* 底部卡拉 OK 歌词胶囊（位于 bottom: 326px，避开抖音底部文案与操作栏，居中 max-width 820px） */
+  #lyric-bar {
+    position: absolute;
+    left: 115px;
+    right: 115px;
+    bottom: 326px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    pointer-events: none;
+    z-index: 25;
+  }
+  #lyric-pill {
+    position: relative;
+    max-width: 830px;
+    padding: 18px 34px 20px;
+    border-radius: 26px;
+    background: rgba(18, 20, 30, 0.76);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.45);
+    text-align: center;
+  }
+  #lyric-text {
+    font-size: 43px;
+    font-weight: 800;
+    line-height: 1.32;
+    letter-spacing: 0.02em;
+    color: #FFFFFF;
+    white-space: nowrap;
+  }
+  #lyric-text .lit {
+    color: #FFD166;
+  }
+  #lyric-text .hl-orange {
+    color: #FF9F7A;
+  }
+  #lyric-next {
+    font-size: 25px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.62);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+    height: 32px;
+  }
+
+  /* 结尾定版卡 */
+  #outro-card {
+    position: absolute;
+    left: 130px;
+    right: 130px;
+    top: 410px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 22;
+    opacity: 0;
+  }
+  .oc-title {
+    font-size: 74px;
+    font-weight: 900;
+    color: #FFF9F0;
+    letter-spacing: 0.04em;
+    text-shadow: 0 10px 34px rgba(0, 0, 0, 0.65);
+  }
+  .oc-sub {
+    margin-top: 18px;
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: rgba(217, 119, 87, 0.25);
+    border: 1.5px solid rgba(255, 184, 152, 0.55);
+    color: #FFE4D6;
+    font-size: 30px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="2160" height="3840"></canvas>
+
+  <div id="top-hud">
+    <div class="song-pill">
+      <span class="eq"><i id="eq1"></i><i id="eq2"></i><i id="eq3"></i></span>
+      <span>八百关卡的云瘾</span>
+    </div>
+    <div class="mood-pill" id="mood-pill">120 BPM · 00:00</div>
+  </div>
+
+  <div id="hero-banner">
+    <div class="hb-main" id="hb-main"></div>
+    <div class="hb-sub" id="hb-sub"></div>
+  </div>
+
+  <div id="outro-card">
+    <div class="oc-title">《八百关卡的云瘾》</div>
+    <div class="oc-sub">献给每个被克劳德拿捏的深夜 ✦</div>
+  </div>
+
+  <div id="lyric-bar">
+    <div id="lyric-pill"><div id="lyric-text"></div></div>
+    <div id="lyric-next"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const W = 1080, H = 1920, DUR = 55.20;
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+
+  // ===== 确定性数学与物理工具（绝不使用 Math.random）=====
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const lerp = (a, b, u) => a + (b - a) * u;
+  const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a), 0, 1); return u * u * (3 - 2 * u); };
+  const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return x - Math.floor(x); };
+  function spring(x, w = 15, z = 0.72) {
+    if (x <= 0) return 0;
+    if (x > 3.5) return 1;
+    const wd = w * Math.sqrt(Math.max(1e-6, 1 - z * z));
+    return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + (z * w / wd) * Math.sin(wd * x));
+  }
+  function mixHex(c1, c2, u) {
+    u = clamp(u, 0, 1);
+    const p = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+    const a = p(c1), b = p(c2);
+    return `rgb(${Math.round(lerp(a[0], b[0], u))},${Math.round(lerp(a[1], b[1], u))},${Math.round(lerp(a[2], b[2], u))})`;
+  }
+
+  // ===== 一次性预生成确定性手绘纸纹贴图（兼顾质感与渲染速度）=====
+  const grainTile = document.createElement('canvas');
+  grainTile.width = 256; grainTile.height = 256;
+  const gctx = grainTile.getContext('2d');
+  const gImg = gctx.createImageData(256, 256);
+  for (let i = 0; i < gImg.data.length; i += 4) {
+    const idx = i >> 2;
+    const v = hash(idx * 1.37) > 0.5 ? 255 : 20;
+    gImg.data[i] = v; gImg.data[i + 1] = v; gImg.data[i + 2] = v;
+    gImg.data[i + 3] = Math.floor(hash(idx * 2.91) * 18);
+  }
+  gctx.putImageData(gImg, 0, 0);
+  const grainPat = ctx.createPattern(grainTile, 'repeat');
+
+  // ===== 精确卡拍歌词时间轴（基于 faster-whisper 实测逐句词点）=====
+  const LYRICS = [
+    { s: 0.00,  e: 4.32,  text: '为了见你，跨过山海赶来',         hl: '跨过山海' },
+    { s: 4.32,  e: 8.24,  text: '熬过八百道墙，一路的挫败',       hl: '八百道墙' },
+    { s: 8.24,  e: 12.40, text: '直到用上你，我以为烦恼都走开',   hl: '用上你' },
+    { s: 12.40, e: 16.92, text: '屏幕里跑出的都是通关全绿的痛快', hl: '通关全绿' },
+    { s: 16.92, e: 20.80, text: '有克劳德陪着我，谁也不能取代',   hl: '克劳德' },
+    { s: 20.80, e: 24.78, text: '在最崩溃的深夜，有你一直都在',   hl: '一直都在' },
+    { s: 24.78, e: 28.38, text: '你带我通读项目，拨开阴霾',       hl: '拨开阴霾' },
+    { s: 28.38, e: 32.20, text: '把报错全部清空，通宵熬夜都淘汰', hl: '报错全部清空' },
+    { s: 32.20, e: 35.50, text: '克劳德太绝情啦',                 hl: '太绝情啦' },
+    { s: 35.50, e: 39.52, text: '千方百计将我拦下',               hl: '千方百计' },
+    { s: 39.52, e: 43.26, text: '温柔只停在一刹那',               hl: '一刹那' },
+    { s: 43.26, e: 47.36, text: '我却已无法自拔',                 hl: '无法自拔' },
+    { s: 47.36, e: 53.60, text: '你筑起八百道关卡，我越是上瘾',   hl: '越是上瘾' },
+  ];
+
+  // ===== 预生成星空固定点 =====
+  const STARS = Array.from({ length: 95 }, (_, i) => ({
+    x: hash(i * 11.3) * W,
+    y: hash(i * 23.7) * 1280,
+    r: 1.4 + hash(i * 7.1) * 3.2,
+    ph: hash(i * 31.9) * Math.PI * 2,
+    spd: 2.0 + hash(i * 5.3) * 3.5,
+  }));
+
+  // ===== 核心手绘角色绘制引擎（12fps 轻微手绘沸腾 + 120 BPM 律动）=====
+  const INK = '#231F20';
+
+  function boil(seed, q12, amp = 1.6) {
+    return (hash(seed + q12 * 13.7) - 0.5) * 2 * amp;
+  }
+
+  // Claude 标志性 12 瓣星芒太阳标
+  function drawStarburst(cx, cy, r, rot, color = '#FFE8D6', stroke = INK) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 3.2;
+    ctx.lineCap = 'round';
+    const rays = 10;
+    ctx.beginPath();
+    for (let i = 0; i < rays * 2; i++) {
+      const ang = (i * Math.PI) / rays;
+      const rad = i % 2 === 0 ? r : r * 0.42;
+      const px = Math.cos(ang) * rad;
+      const py = Math.sin(ang) * rad;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    if (stroke) ctx.stroke();
+    ctx.restore();
+  }
+
+  // 画可爱圆润心形
+  function drawHeart(cx, cy, size, color = '#FF6B8B', stroke = INK, broken = false) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = Math.max(2.2, size * 0.12);
+    ctx.lineJoin = 'round';
+    const s = size;
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.35);
+    ctx.bezierCurveTo(-s * 0.85, -s * 0.25, -s * 0.85, -s * 1.0, 0, -s * 0.42);
+    ctx.bezierCurveTo(s * 0.85, -s * 1.0, s * 0.85, -s * 0.25, 0, s * 0.35);
+    ctx.closePath();
+    ctx.fill();
+    if (stroke) ctx.stroke();
+    if (broken) {
+      ctx.strokeStyle = '#14172b';
+      ctx.lineWidth = Math.max(3, size * 0.14);
+      ctx.beginPath();
+      ctx.moveTo(0, -s * 0.44);
+      ctx.lineTo(-s * 0.14, -s * 0.12);
+      ctx.lineTo(s * 0.14, s * 0.05);
+      ctx.lineTo(-s * 0.06, s * 0.34);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ===== 角色 A：熬夜程序员小方块（致敬原片棕色小方块 + 眼镜 + 丰富表情）=====
+  function drawCoder(x, y, scale, t, opts = {}) {
+    const {
+      mood = 'happy',      // happy | sad | love | shock | cry | hug | walk
+      armL = 0, armR = 0,
+      walkPhase = 0,
+      glasses = true,
+      backpack = false,
+      tilt = 0,
+      alpha = 1,
+    } = opts;
+    const q12 = Math.floor(t * 12);
+    const beatPulse = Math.exp(-((t * 2) % 1) * 6.5);
+    const bob = mood === 'walk' ? Math.abs(Math.sin(walkPhase)) * 10 : beatPulse * 5;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x + boil(1, q12, 0.9), y - bob + boil(2, q12, 0.9));
+    ctx.rotate(tilt);
+    ctx.scale(scale, scale);
+
+    // 地面投影
+    ctx.fillStyle = 'rgba(20, 18, 28, 0.18)';
+    ctx.beginPath();
+    ctx.ellipse(0, 62 + bob * 0.4, 58, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 4 条可爱小短腿（致敬参考片四条小腿或经典双腿动效）
+    const legSwing = mood === 'walk' ? Math.sin(walkPhase) * 14 : Math.sin(t * 6.28) * 3;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 4.5;
+    ctx.lineCap = 'round';
+    const legs = [-34, -12, 12, 34];
+    legs.forEach((lx, idx) => {
+      const sw = (idx % 2 === 0 ? 1 : -1) * legSwing;
+      ctx.fillStyle = '#9E5834';
+      ctx.beginPath();
+      ctx.roundRect(lx - 6 + sw * 0.3, 30, 12, 30, 6);
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    // 小行囊（第 1 镜赶路时背着）
+    if (backpack) {
+      ctx.fillStyle = '#4A6FA5';
+      ctx.beginPath();
+      ctx.roundRect(-72, -32, 24, 54, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#E9C46A';
+      ctx.fillRect(-70, -14, 20, 8);
+    }
+
+    // 手臂
+    const drawArm = (side, angleDeg) => {
+      ctx.save();
+      ctx.translate(side * 56, -4);
+      ctx.rotate((angleDeg * Math.PI) / 180);
+      ctx.fillStyle = '#B96B40';
+      ctx.beginPath();
+      ctx.roundRect(side > 0 ? 0 : -34, -7, 34, 14, 7);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    };
+    if (mood !== 'hug') {
+      drawArm(-1, armL);
+      drawArm(1, armR);
+    }
+
+    // 方块身体（带左侧书脊/立体折边细节，致敬原片！）
+    ctx.fillStyle = '#C87A4B';
+    ctx.beginPath();
+    ctx.roundRect(-58, -56, 116, 92, 14);
+    ctx.fill();
+    ctx.stroke();
+    // 左侧立体折面
+    ctx.fillStyle = '#AE6338';
+    ctx.beginPath();
+    ctx.roundRect(-58, -56, 22, 92, [14, 0, 0, 14]);
+    ctx.fill();
+    ctx.stroke();
+
+    // 温暖胸口小爱心（拥抱收尾时点亮）
+    if (mood === 'hug') {
+      drawHeart(8, 12, 16, '#FF8A65', INK);
+      // 双臂抱住自己
+      ctx.fillStyle = '#B96B40';
+      ctx.beginPath();
+      ctx.roundRect(-48, 0, 52, 15, 8);
+      ctx.roundRect(6, 0, 52, 15, 8);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // 腮红
+    ctx.fillStyle = 'rgba(255, 118, 136, 0.42)';
+    ctx.beginPath();
+    ctx.ellipse(-20, 6, 11, 6, 0, 0, Math.PI * 2);
+    ctx.ellipse(38, 6, 11, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 眼睛（位于身体中偏右，与左侧折面平衡）
+    const exL = -10, exR = 28, ey = -12;
+    const blink = (t % 3.2) > 3.08;
+    if (mood === 'hug' || blink) {
+      ctx.strokeStyle = INK; ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(exL, ey + 2, 10, Math.PI * 1.1, Math.PI * 1.9);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(exR, ey + 2, 10, Math.PI * 1.1, Math.PI * 1.9);
+      ctx.stroke();
+    } else if (mood === 'love') {
+      drawHeart(exL, ey + 4, 15, '#FF5C8A', INK);
+      drawHeart(exR, ey + 4, 15, '#FF5C8A', INK);
+    } else {
+      for (const ex of [exL, exR]) {
+        ctx.fillStyle = '#1D2036';
+        ctx.beginPath();
+        ctx.ellipse(ex, ey, 10.5, mood === 'shock' ? 13 : 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // 大高光星点
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(ex - 3.5, ey - 4, 3.8, 0, Math.PI * 2);
+        ctx.arc(ex + 3.2, ey + 3, 2.0, 0, Math.PI * 2);
+        ctx.fill();
+        if (mood === 'sad' || mood === 'cry') {
+          ctx.fillStyle = '#7DD3FC';
+          ctx.beginPath();
+          ctx.arc(ex + 2, ey + 7, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      // 眉毛表达情绪
+      ctx.strokeStyle = INK; ctx.lineWidth = 3.8;
+      if (mood === 'sad' || mood === 'cry') {
+        ctx.beginPath();
+        ctx.moveTo(exL - 10, ey - 16); ctx.lineTo(exL + 6, ey - 22);
+        ctx.moveTo(exR + 10, ey - 16); ctx.lineTo(exR - 6, ey - 22);
+        ctx.stroke();
+      } else if (mood === 'shock') {
+        ctx.beginPath();
+        ctx.moveTo(exL - 10, ey - 24); ctx.lineTo(exL + 8, ey - 24);
+        ctx.moveTo(exR - 8, ey - 24); ctx.lineTo(exR + 10, ey - 24);
+        ctx.stroke();
+      }
+    }
+
+    // 程序员黑框小眼镜
+    if (glasses) {
+      ctx.strokeStyle = '#1B1918';
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      ctx.roundRect(exL - 16, ey - 15, 32, 28, 8);
+      ctx.roundRect(exR - 16, ey - 15, 32, 28, 8);
+      ctx.moveTo(exL + 16, ey - 2); ctx.lineTo(exR - 16, ey - 2);
+      ctx.stroke();
+    }
+
+    // 哭泣眼泪流下
+    if (mood === 'cry') {
+      const tearY = ((t * 65) % 28);
+      ctx.fillStyle = '#7DD3FC';
+      ctx.beginPath();
+      ctx.arc(exL - 2, ey + 14 + tearY, 4.5, 0, Math.PI * 2);
+      ctx.arc(exR + 2, ey + 10 + ((tearY + 14) % 28), 4.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 嘴巴
+    ctx.strokeStyle = INK; ctx.lineWidth = 3.6;
+    if (mood === 'happy' || mood === 'love' || mood === 'walk' || mood === 'hug') {
+      ctx.beginPath();
+      ctx.arc(9, 10, 9, 0.15 * Math.PI, 0.85 * Math.PI);
+      ctx.stroke();
+    } else if (mood === 'shock') {
+      ctx.fillStyle = '#2A1D24';
+      ctx.beginPath();
+      ctx.ellipse(9, 14, 8, 11, 0, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+    } else {
+      // 委屈波浪嘴
+      ctx.beginPath();
+      ctx.moveTo(-2, 16);
+      ctx.quadraticCurveTo(9, 8, 20, 16);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ===== 角色 B：卡通克劳德精灵（经典陶土橙 #D97757 + 头顶旋转星芒徽章 + 甜萌/墨镜绝情双形态！）=====
+  function drawClaudeChar(x, y, scale, t, opts = {}) {
+    const {
+      mode = 'sweet',      // sweet | love | cold | smug | fade
+      armL = 0, armR = 0,
+      wand = false,
+      signText = '',
+      tilt = 0,
+      alpha = 1,
+    } = opts;
+    const q12 = Math.floor(t * 12);
+    const beatPulse = Math.exp(-((t * 2) % 1) * 6.0);
+    const floatY = Math.sin(t * 3.8) * 6 + beatPulse * 5;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x + boil(7, q12, 0.9), y - floatY + boil(8, q12, 0.9));
+    ctx.rotate(tilt);
+    ctx.scale(scale, scale);
+
+    // 温暖外光晕
+    const glow = ctx.createRadialGradient(0, -10, 10, 0, -10, 96);
+    glow.addColorStop(0, mode === 'cold' || mode === 'smug' ? 'rgba(239, 68, 68, 0.34)' : 'rgba(217, 119, 87, 0.38)');
+    glow.addColorStop(1, 'rgba(217, 119, 87, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, -10, 96, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 地面投影
+    ctx.fillStyle = 'rgba(20, 18, 28, 0.16)';
+    ctx.beginPath();
+    ctx.ellipse(0, 56 + floatY * 0.4, 52, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 4 条萌系橙色小脚
+    ctx.strokeStyle = INK; ctx.lineWidth = 4.2; ctx.lineCap = 'round';
+    [-30, -10, 10, 30].forEach((lx, idx) => {
+      const sw = Math.sin(t * 6.28 + idx) * 3;
+      ctx.fillStyle = '#BD5D3E';
+      ctx.beginPath();
+      ctx.roundRect(lx - 5.5, 24 + sw * 0.4, 11, 26, 5.5);
+      ctx.fill(); ctx.stroke();
+    });
+
+    // 手臂
+    const drawArm = (side, deg) => {
+      ctx.save();
+      ctx.translate(side * 52, -4);
+      ctx.rotate((deg * Math.PI) / 180);
+      ctx.fillStyle = '#D97757';
+      ctx.beginPath();
+      ctx.roundRect(side > 0 ? 0 : -32, -7, 32, 14, 7);
+      ctx.fill(); ctx.stroke();
+      // 星芒魔法棒
+      if (wand && side < 0) {
+        ctx.strokeStyle = '#FDE68A'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(-28, 0); ctx.lineTo(-60, -28); ctx.stroke();
+        drawStarburst(-64, -32, 18, t * 2.4, '#FFD166', INK);
+      }
+      // 绝情「受限」红牌（带小木柄，更像卡通禁行拍！）
+      if (signText && side < 0) {
+        ctx.save();
+        ctx.translate(-32, 0);
+        ctx.rotate(-0.18);
+        ctx.strokeStyle = INK; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(0, 14); ctx.lineTo(0, -34); ctx.stroke();
+        ctx.fillStyle = '#DC2626';
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.roundRect(-52, -78, 104, 50, 12); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '900 23px "PingFang SC", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(signText, 0, -52);
+        ctx.restore();
+      }
+      ctx.restore();
+    };
+    drawArm(-1, armL);
+    drawArm(1, armR);
+
+    // 陶土橙圆润主体（经典 Claude 品牌陶土橙 #D97757 + 暖杏高光）
+    ctx.fillStyle = '#D97757';
+    ctx.beginPath();
+    ctx.roundRect(-54, -52, 108, 84, 24);
+    ctx.fill(); ctx.stroke();
+    // 顶部暖高光条
+    ctx.fillStyle = 'rgba(255, 244, 232, 0.28)';
+    ctx.beginPath();
+    ctx.roundRect(-38, -44, 76, 12, 6);
+    ctx.fill();
+
+    // 头顶标志性旋转 12 瓣星芒徽章（呆毛感）
+    ctx.strokeStyle = INK; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(0, -52); ctx.lineTo(0, -68); ctx.stroke();
+    drawStarburst(0, -82, 22, t * (mode === 'cold' ? 0.6 : 1.8), mode === 'cold' ? '#FCA5A5' : '#FFE8C2', INK);
+
+    // 腮红
+    ctx.fillStyle = 'rgba(255, 220, 210, 0.45)';
+    ctx.beginPath();
+    ctx.ellipse(-30, 4, 10, 5.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(30, 4, 10, 5.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 表情切换：甜萌 vs 冷酷墨镜傲娇
+    const exL = -19, exR = 19, ey = -12;
+    if (mode === 'cold' || mode === 'smug') {
+      // 超酷绝情黑墨镜！
+      ctx.fillStyle = '#14151B';
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.roundRect(exL - 17, ey - 11, 32, 22, 6);
+      ctx.roundRect(exR - 15, ey - 11, 32, 22, 6);
+      ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#14151B'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(exL + 15, ey - 3); ctx.lineTo(exR - 15, ey - 3); ctx.stroke();
+      // 墨镜反光斜杠
+      ctx.strokeStyle = 'rgba(255,255,255,0.65)'; ctx.lineWidth = 2.8;
+      ctx.beginPath();
+      ctx.moveTo(exL - 10, ey - 6); ctx.lineTo(exL - 2, ey + 5);
+      ctx.moveTo(exR - 8, ey - 6); ctx.lineTo(exR, ey + 5);
+      ctx.stroke();
+      // 高冷小嘴
+      ctx.strokeStyle = INK; ctx.lineWidth = 3.6;
+      ctx.beginPath();
+      if (mode === 'smug') {
+        ctx.moveTo(-8, 12); ctx.quadraticCurveTo(4, 16, 14, 9);
+      } else {
+        ctx.moveTo(-11, 13); ctx.lineTo(11, 13);
+      }
+      ctx.stroke();
+    } else if (mode === 'love') {
+      drawHeart(exL, ey + 3, 13, '#FFF0F5', INK);
+      drawHeart(exR, ey + 3, 13, '#FFF0F5', INK);
+      ctx.strokeStyle = INK; ctx.lineWidth = 3.6;
+      ctx.beginPath(); ctx.arc(0, 8, 8, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+    } else {
+      // 笑眯眯弯弯眼 / 闪亮大眼
+      const smileEye = Math.sin(t * 2.1) > 0.25;
+      if (smileEye) {
+        ctx.strokeStyle = INK; ctx.lineWidth = 4.2;
+        for (const ex of [exL, exR]) {
+          ctx.beginPath();
+          ctx.arc(ex, ey + 4, 10, Math.PI * 1.12, Math.PI * 1.88);
+          ctx.stroke();
+        }
+      } else {
+        for (const ex of [exL, exR]) {
+          ctx.fillStyle = '#1D2036';
+          ctx.beginPath(); ctx.ellipse(ex, ey, 9.5, 11.5, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath(); ctx.arc(ex - 3, ey - 3.5, 3.4, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      ctx.strokeStyle = INK; ctx.lineWidth = 3.6;
+      ctx.beginPath(); ctx.arc(0, 7, 9, 0.12 * Math.PI, 0.88 * Math.PI); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ===== 公共布景：渐变天空、闪烁星空、底部弯弧小星球 =====
+  function drawSky(topCol, botCol, starAlpha = 0, t = 0) {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, topCol);
+    g.addColorStop(1, botCol);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    if (starAlpha > 0.01) {
+      ctx.save();
+      for (const st of STARS) {
+        const tw = 0.4 + 0.6 * Math.sin(t * st.spd + st.ph);
+        ctx.fillStyle = `rgba(255, 250, 230, ${(starAlpha * tw).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  function drawPlanet(cx, cy, r, fill, grass = false, craters = true, t = 0) {
+    ctx.save();
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    if (craters) {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+      [[-180, -r + 120, 44], [150, -r + 150, 56], [-40, -r + 220, 32], [290, -r + 230, 38], [-310, -r + 210, 36]].forEach(([dx, dy, cr]) => {
+        ctx.beginPath();
+        ctx.ellipse(cx + dx, cy + dy, cr, cr * 0.62, dx * 0.001, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+    if (grass) {
+      // 小草叶与可爱小雏菊沿着星球顶部弧线生长
+      const q12 = Math.floor(t * 12);
+      ctx.strokeStyle = INK; ctx.lineWidth = 3;
+      for (let i = -14; i <= 14; i++) {
+        const ang = -Math.PI / 2 + i * 0.048;
+        const gx = cx + Math.cos(ang) * r;
+        const gy = cy + Math.sin(ang) * r;
+        const tipX = cx + Math.cos(ang + boil(i * 3, q12, 0.008)) * (r + 18);
+        const tipY = cy + Math.sin(ang) * (r + 18);
+        ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(tipX, tipY); ctx.stroke();
+        if (i % 5 === 0) {
+          // 白色小花
+          const fx = cx + Math.cos(ang) * (r + 22);
+          const fy = cy + Math.sin(ang) * (r + 22);
+          ctx.fillStyle = '#FFFFFF';
+          for (let p = 0; p < 5; p++) {
+            const pa = (p * Math.PI * 2) / 5;
+            ctx.beginPath(); ctx.arc(fx + Math.cos(pa) * 7, fy + Math.sin(pa) * 7, 5, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.fillStyle = '#FFD166';
+          ctx.beginPath(); ctx.arc(fx, fy, 5, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawCloud(cx, cy, s, col = '#FFFFFF') {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(s, s);
+    ctx.fillStyle = col;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(-44, 8, 28, Math.PI * 0.5, Math.PI * 1.5);
+    ctx.arc(-16, -12, 34, Math.PI, Math.PI * 2);
+    ctx.arc(24, -8, 30, Math.PI * 1.05, Math.PI * 1.95);
+    ctx.arc(46, 10, 26, Math.PI * 1.5, Math.PI * 0.5);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawUmbrella(cx, cy, s) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(s, s);
+    ctx.strokeStyle = INK; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    // 伞柄
+    ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(0, 128);
+    ctx.arc(10, 128, 10, Math.PI, 0, true); ctx.stroke();
+    // 暖黄伞面
+    ctx.fillStyle = '#F7C948';
+    ctx.beginPath();
+    ctx.arc(0, 0, 118, Math.PI, 0, false);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    // 伞骨线
+    ctx.lineWidth = 3;
+    [-55, 0, 55].forEach(dx => {
+      ctx.beginPath(); ctx.moveTo(0, -118); ctx.quadraticCurveTo(dx * 0.6, -55, dx, 0); ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  // ===== 场景分镜渲染函数（13 句精准对应）=====
+  function drawScene(t) {
+    const cx = W / 2;
+    const planetY = 1970;
+    const planetR = 860;
+    const groundY = planetY - planetR; // y = 1110
+
+    // ---------- 1. 0.00–4.32s：开场大眼特写 → 跨过山海赶来 ----------
+    if (t < 4.32) {
+      if (t < 1.05) {
+        // 致敬参考片开场 1 秒大眼特写！
+        const sc = 1 + (1 - smooth(0, 0.9, t)) * 0.08;
+        ctx.save();
+        ctx.translate(cx, H * 0.5);
+        ctx.scale(sc, sc);
+        ctx.fillStyle = '#C87A4B';
+        ctx.fillRect(-W, -H, W * 2, H * 2);
+        // 左侧立体边
+        ctx.fillStyle = '#AE6338';
+        ctx.fillRect(-540, -960, 140, 1920);
+        // 巨型闪亮大眼 + 陶土橙心形瞳孔反光
+        for (const ex of [-175, 175]) {
+          ctx.fillStyle = '#1D2036';
+          ctx.beginPath(); ctx.ellipse(ex, -70, 92, 128, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath(); ctx.arc(ex - 32, -125, 30, 0, Math.PI * 2); ctx.fill();
+          drawHeart(ex + 22, -22, 34, '#FF9F7A', null);
+          // 粗眉毛
+          ctx.strokeStyle = INK; ctx.lineWidth = 18; ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(ex - 65, -245); ctx.lineTo(ex, -270); ctx.lineTo(ex + 65, -245); ctx.stroke();
+        }
+        // 腮红与小惊讶嘴
+        ctx.fillStyle = 'rgba(255, 130, 145, 0.35)';
+        ctx.beginPath(); ctx.ellipse(-280, 95, 76, 36, 0, 0, Math.PI * 2); ctx.ellipse(280, 95, 76, 36, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#1D2036';
+        ctx.beginPath(); ctx.ellipse(0, 175, 34, 44, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else {
+        const lt = t - 1.05;
+        drawSky('#151B38', '#2C3A67', 0.95, t);
+        // 远方地平线闪耀的克劳德星芒目标
+        const starPulse = 1 + 0.14 * Math.sin(t * 6.28);
+        drawStarburst(820, 620, 44 * starPulse, t * 1.4, '#FF9F7A', '#FFF3E6');
+        // 弯曲虚线山海路径
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 220, 180, 0.55)';
+        ctx.lineWidth = 5; ctx.setLineDash([14, 14]);
+        ctx.beginPath(); ctx.moveTo(220, 1140); ctx.quadraticCurveTo(540, 860, 795, 650); ctx.stroke();
+        ctx.restore();
+        drawPlanet(cx, planetY, planetR, '#7C859D', false, true, t);
+        // 程序员小方块背着行囊踏步向前
+        const px = lerp(240, 520, smooth(0, 3.1, lt));
+        drawCoder(px, groundY - 48, 1.35, t, { mood: 'walk', walkPhase: t * 10, backpack: true, armR: -35, armL: 25 });
+      }
+      return;
+    }
+
+    // ---------- 2. 4.32–8.24s：熬过八百道墙，一路的挫败 ----------
+    if (t < 8.24) {
+      const lt = t - 4.32;
+      drawSky('#1B223C', '#343E5C', 0.75, t);
+      drawPlanet(cx, planetY, planetR, '#6E778F', false, true, t);
+
+      // 报错红雨乌云
+      drawCloud(360, 690 + Math.sin(t * 3) * 8, 1.25, '#8A94A8');
+      ctx.strokeStyle = '#F87171'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      for (let i = 0; i < 14; i++) {
+        const rx = 270 + (i % 7) * 30;
+        const ry = 745 + ((t * 340 + i * 53) % 340);
+        ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 4, ry + 20); ctx.stroke();
+      }
+      // 3 道透明红边高墙卡点砸落 (01 / 403 / 800)
+      const walls = [
+        { at: 0.25, x: 560, h: 240, lbl: '墙 #01' },
+        { at: 0.95, x: 690, h: 310, lbl: '墙 #403' },
+        { at: 1.65, x: 820, h: 380, lbl: '墙 #800' },
+      ];
+      walls.forEach(w => {
+        const s = spring(lt - w.at, 16, 0.68);
+        if (s <= 0.01) return;
+        const wy = groundY - w.h * s;
+        ctx.save();
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.18)';
+        ctx.strokeStyle = '#F87171'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.roundRect(w.x - 46, wy, 92, w.h * s, 12); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#FECACA';
+        ctx.font = '800 22px "SF Mono", "PingFang SC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(w.lbl, w.x, wy + 34);
+        ctx.restore();
+      });
+
+      drawCoder(355, groundY - 48, 1.35, t, { mood: 'sad', armL: 35, armR: -35, backpack: true });
+
+      // 末尾流星划过，预告希望到来！
+      if (lt > 2.6) {
+        const mp = smooth(2.6, 3.8, lt);
+        const mx = lerp(160, 880, mp), my = lerp(420, 740, mp);
+        const lg = ctx.createLinearGradient(mx - 140, my - 65, mx, my);
+        lg.addColorStop(0, 'rgba(255,232,163,0)');
+        lg.addColorStop(1, '#FFE8A3');
+        ctx.strokeStyle = lg; ctx.lineWidth = 8; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(mx - 140, my - 65); ctx.lineTo(mx, my); ctx.stroke();
+        drawStarburst(mx, my, 24, t * 5, '#FFF5CC', null);
+      }
+      return;
+    }
+
+    // ---------- 3. 8.24–12.40s：直到用上你，我以为烦恼都走开 ----------
+    if (t < 12.40) {
+      const lt = t - 8.24;
+      const dawn = smooth(0, 1.5, lt);
+      drawSky(mixHex('#3B3154', '#E88D5A', dawn), mixHex('#7E5A6E', '#FDE8C8', dawn), 1 - dawn, t);
+
+      // 暖色放射阳光旋转
+      ctx.save();
+      ctx.translate(cx, groundY - 120);
+      ctx.rotate(t * 0.25);
+      ctx.fillStyle = `rgba(255, 244, 210, ${(0.22 * dawn).toFixed(3)})`;
+      for (let i = 0; i < 12; i++) {
+        ctx.rotate((Math.PI * 2) / 12);
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-42, -980); ctx.lineTo(42, -980); ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+
+      drawPlanet(cx, planetY, planetR, mixHex('#6E778F', '#58A85E', dawn), dawn > 0.3, false, t);
+
+      // 克劳德小精灵弹簧跃出 + 撒出金星光点！
+      const cs = spring(lt - 0.35, 13, 0.62);
+      // 上方漂浮金色星星光点，让构图上下饱满
+      for (let i = 0; i < 10; i++) {
+        const sx = 200 + hash(i * 19) * 680;
+        const sy = 360 + hash(i * 37) * 440 - Math.sin(t * 2.5 + i) * 18;
+        drawStarburst(sx, sy, 10 + (i % 3) * 6, t * 2 + i, '#FFF3B0', null);
+      }
+      drawCoder(345, groundY - 56, 1.50, t, { mood: lt > 0.5 ? 'happy' : 'shock', armR: -45, armL: 30 });
+      drawClaudeChar(715, lerp(groundY + 120, groundY - 62, cs), 1.50 * clamp(cs, 0.1, 1.15), t, {
+        mode: 'sweet', armL: -40, armR: 35, wand: true,
+      });
+
+      // 惊喜感叹号气泡
+      if (lt > 0.55) {
+        const es = spring(lt - 0.55, 18, 0.55);
+        ctx.save();
+        ctx.translate(340, groundY - 210);
+        ctx.scale(es, es);
+        ctx.fillStyle = '#FFD166'; ctx.strokeStyle = INK; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(0, 0, 28, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = INK; ctx.font = '900 36px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('!', 0, 2);
+        ctx.restore();
+      }
+      return;
+    }
+
+    // ---------- 4. 12.40–16.92s：屏幕里跑出的都是通关全绿的痛快 ----------
+    if (t < 16.92) {
+      const lt = t - 12.40;
+      if (lt < 1.55) {
+        // 温暖大眼特写：瞳孔倒映通关全绿 ✓ PASS！
+        ctx.fillStyle = '#C87A4B'; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#AE6338'; ctx.fillRect(0, 0, 140, H);
+        for (const ex of [370, 710]) {
+          ctx.fillStyle = '#182436';
+          ctx.beginPath(); ctx.ellipse(ex, 840, 86, 118, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#34D399';
+          ctx.font = '900 42px "SF Mono", sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText('✓ OK', ex, 855);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath(); ctx.arc(ex - 32, 785, 24, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.fillStyle = 'rgba(255, 120, 140, 0.40)';
+        ctx.beginPath(); ctx.ellipse(250, 995, 72, 34, 0, 0, Math.PI * 2); ctx.ellipse(830, 995, 72, 34, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = INK; ctx.lineWidth = 14; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.arc(540, 1020, 56, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+      } else {
+        // 落日橘海 + 双人牵手 + 绿色全绿气泡升空
+        drawSky('#F4A261', '#FCE3B4', 0, t);
+        // 橘色落日
+        ctx.fillStyle = '#FFF3B0';
+        ctx.beginPath(); ctx.arc(680, 870, 130, 0, Math.PI * 2); ctx.fill();
+        // 蓝海平面与水波纹
+        ctx.fillStyle = '#4A89B8';
+        ctx.fillRect(0, 870, W, 500);
+        ctx.strokeStyle = 'rgba(255, 243, 176, 0.65)'; ctx.lineWidth = 5;
+        for (let i = 0; i < 7; i++) {
+          const wy = 900 + i * 32;
+          const ww = 160 - i * 16 + Math.sin(t * 4 + i) * 18;
+          ctx.beginPath(); ctx.moveTo(680 - ww, wy); ctx.lineTo(680 + ww, wy); ctx.stroke();
+        }
+        drawPlanet(cx, planetY, planetR, '#58A85E', true, false, t);
+        drawCoder(410, groundY - 54, 1.46, t, { mood: 'happy', armR: 12, armL: 20 });
+        drawClaudeChar(665, groundY - 56, 1.46, t, { mode: 'sweet', armL: -12, armR: -20 });
+
+        // 飘升的绿色通关胶囊（严格控制在水平安全区 x: 250..810 内）
+        const tags = ['✓ 42 passed', '✓ 0 errors', '✓ Build OK', '✓ 测试全绿'];
+        tags.forEach((tg, i) => {
+          const u = clamp(((lt - 1.55) * 0.45 + i * 0.24) % 1, 0, 1);
+          const bx = 265 + i * 175 + Math.sin(t * 2 + i) * 14;
+          const by = lerp(groundY - 190, 410, u);
+          ctx.save();
+          ctx.globalAlpha = Math.sin(u * Math.PI);
+          ctx.fillStyle = '#10B981'; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.roundRect(bx - 82, by - 24, 164, 48, 24); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = '#FFFFFF'; ctx.font = '800 22px "SF Mono", "PingFang SC", sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(tg, bx, by + 1);
+          ctx.restore();
+        });
+      }
+      return;
+    }
+
+    // ---------- 5. 16.92–20.80s：有克劳德陪着我，谁也不能取代 ----------
+    if (t < 20.80) {
+      drawSky('#6BC5F8', '#C6EBFF', 0, t);
+      drawCloud(250 + Math.sin(t * 0.7) * 28, 520, 1.15, '#FFFFFF');
+      drawCloud(810 - Math.sin(t * 0.6) * 24, 620, 1.0, '#FFFFFF');
+      drawPlanet(cx, planetY, planetR, '#58A85E', true, false, t);
+
+      const hop = Math.abs(Math.sin(t * Math.PI * 2)) * 22;
+      drawCoder(395, groundY - 50 - hop, 1.36, t, { mood: 'love', armL: -42, armR: 38 });
+      drawClaudeChar(685, groundY - 52 - hop, 1.36, t, { mode: 'love', armL: -38, armR: 42 });
+
+      // 飘飞爱心柱（致敬原片连串爱心！）
+      for (let i = 0; i < 8; i++) {
+        const u = ((t * 0.45 + i * 0.13) % 1);
+        const hx = cx + Math.sin(u * 5 + i) * 90;
+        const hy = lerp(groundY - 140, 400, u);
+        ctx.save();
+        ctx.globalAlpha = Math.sin(u * Math.PI);
+        drawHeart(hx, hy, 22 + (i % 3) * 8, i % 2 === 0 ? '#FF6B8B' : '#FF9F7A', INK);
+        ctx.restore();
+      }
+      return;
+    }
+
+    // ---------- 6. 20.80–24.78s：在最崩溃的深夜，有你一直都在 ----------
+    if (t < 24.78) {
+      drawSky('#404A5E', '#7B879B', 0.35, t);
+      // 乌云后探出的弯月
+      ctx.fillStyle = '#FDE68A'; ctx.beginPath(); ctx.arc(540, 460, 56, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#4A556A'; ctx.beginPath(); ctx.arc(564, 444, 48, 0, Math.PI * 2); ctx.fill();
+      drawCloud(310, 520, 1.4, '#697488');
+      drawCloud(750, 560, 1.3, '#5E687B');
+      // 倾斜暴雨丝
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.55)'; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+      for (let i = 0; i < 46; i++) {
+        const rx = (hash(i * 17) * (W + 200)) - 100;
+        const ry = ((hash(i * 31) * 1400 + t * 680) % 1500);
+        if (rx > 330 && rx < 750 && ry > 790 && ry < 1140) continue;
+        ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 14, ry + 36); ctx.stroke();
+      }
+      drawPlanet(cx, planetY, planetR, '#5A6D62', true, false, t);
+
+      // 暖黄大雨伞温柔护住俩人！
+      drawUmbrella(540, 845 + Math.sin(t * 3) * 4, 1.72);
+      drawCoder(435, groundY - 52, 1.44, t, { mood: 'sad', armR: 15 });
+      drawClaudeChar(650, groundY - 56, 1.44, t, { mode: 'sweet', armL: -18, armR: 15 });
+      return;
+    }
+
+    // ---------- 7. 24.78–28.38s：你带我通读项目，拨开阴霾 ----------
+    if (t < 28.38) {
+      const lt = t - 24.78;
+      const clear = smooth(0.2, 2.2, lt);
+      drawSky(mixHex('#505A6E', '#62B6F5', clear), mixHex('#8994A8', '#D7F1FF', clear), 0, t);
+
+      // 太阳升起
+      const sunY = lerp(880, 500, clear);
+      ctx.fillStyle = '#FFD166';
+      ctx.beginPath(); ctx.arc(280, sunY, 72, 0, Math.PI * 2); ctx.fill();
+
+      // 乌云向两侧被拨开
+      drawCloud(lerp(360, -140, clear), 560, 1.45, '#647084');
+      drawCloud(lerp(720, 1220, clear), 580, 1.4, '#5B677B');
+
+      // 彩虹弧逐步绘出
+      const rbProg = smooth(0.8, 2.8, lt);
+      if (rbProg > 0.01) {
+        const rbCols = ['#FF6B6B', '#FFD166', '#58D68D', '#5DADE2', '#AF7AC5'];
+        ctx.save();
+        rbCols.forEach((col, i) => {
+          ctx.strokeStyle = col; ctx.lineWidth = 22;
+          ctx.beginPath();
+          ctx.arc(cx, groundY + 120, 540 - i * 22, Math.PI, Math.PI + Math.PI * rbProg, false);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+
+      drawPlanet(cx, planetY, planetR, mixHex('#5A6D62', '#58A85E', clear), true, false, t);
+      drawCoder(410, groundY - 50, 1.32, t, { mood: clear > 0.5 ? 'happy' : 'sad', armR: -30 });
+      drawClaudeChar(675, groundY - 54, 1.34, t, { mode: 'sweet', wand: true, armL: -48 + Math.sin(t * 7) * 14 });
+      return;
+    }
+
+    // ---------- 8. 28.38–32.20s：把报错全部清空，通宵熬夜都淘汰 ----------
+    if (t < 32.20) {
+      const lt = t - 28.38;
+      drawSky('#62B6F5', '#D9F3FF', 0, t);
+      // 完整彩虹
+      ['#FF6B6B', '#FFD166', '#58D68D', '#5DADE2', '#AF7AC5'].forEach((col, i) => {
+        ctx.strokeStyle = col; ctx.lineWidth = 22;
+        ctx.beginPath(); ctx.arc(cx, groundY + 120, 540 - i * 22, Math.PI, Math.PI * 2, false); ctx.stroke();
+      });
+      drawPlanet(cx, planetY, planetR, '#58A85E', true, false, t);
+
+      // 中央透明代码星罐（致敬原片玻璃罐！）
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.strokeStyle = INK; ctx.lineWidth = 4.5;
+      ctx.beginPath(); ctx.roundRect(cx - 64, groundY - 135, 128, 138, 18); ctx.fill(); ctx.stroke();
+      // 罐内闪亮小金星
+      for (let i = 0; i < 6; i++) {
+        drawStarburst(cx - 34 + (i % 3) * 34, groundY - 26 - Math.floor(i / 3) * 36, 13, t * 2 + i, '#FFD166', INK);
+      }
+      ctx.restore();
+
+      // 把报错/熬夜黑球抛飞出去！
+      const throwP = (lt * 0.65) % 1;
+      const bx = lerp(cx - 10, 180, throwP);
+      const by = lerp(groundY - 120, 480, throwP) - Math.sin(throwP * Math.PI) * 160;
+      ctx.save();
+      ctx.translate(bx, by); ctx.rotate(lt * 8);
+      ctx.fillStyle = '#3F3F46'; ctx.strokeStyle = INK; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(0, 0, 32, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#F87171'; ctx.font = '900 18px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('BUG', 0, 1);
+      ctx.restore();
+
+      drawCoder(340, groundY - 52, 1.34, t, { mood: 'happy', armR: -50, armL: 25 });
+      drawClaudeChar(740, groundY - 54, 1.34, t, { mode: 'sweet', armL: -45, armR: 30 });
+      return;
+    }
+
+    // ---------- 9. 32.20–35.50s：副歌炸裂反转！克劳德太绝情啦 ----------
+    if (t < 35.50) {
+      const lt = t - 32.20;
+      const impact = spring(lt, 22, 0.58);
+      drawSky('#151226', '#2D193C', 0.85, t);
+      // 红紫脉冲警戒光环随鼓点扩散
+      const pulse = (t * 2) % 1;
+      ctx.strokeStyle = `rgba(239, 68, 68, ${(1 - pulse) * 0.55})`;
+      ctx.lineWidth = 8;
+      ctx.beginPath(); ctx.arc(700, groundY - 90, 90 + pulse * 360, 0, Math.PI * 2); ctx.stroke();
+
+      drawPlanet(cx, planetY, planetR, '#433859', false, true, t);
+
+      // 程序员小方块当场惊呆石化；克劳德秒戴墨镜高冷举起「受限」红牌！
+      drawCoder(340, groundY - 54, 1.48, t, { mood: 'shock', armL: -55, armR: 55, tilt: -0.06 * impact });
+      drawClaudeChar(715, groundY - 62, 1.52 * (0.85 + 0.15 * impact), t, {
+        mode: 'cold', armL: -10, armR: 25, signText: '访问受限',
+      });
+      return;
+    }
+
+    // ---------- 10. 35.50–39.52s：千方百计将我拦下 ----------
+    if (t < 39.52) {
+      const lt = t - 35.50;
+      drawSky('#13162B', '#281F44', 0.9, t);
+      drawPlanet(cx, planetY, planetR, '#3F4362', false, true, t);
+
+      // 三道整齐错落红激光门禁锁依次砸下拦在两人之间
+      const gates = [
+        { at: 0.10, x: 455, h: 350, code: '01' },
+        { at: 0.85, x: 540, h: 415, code: '403' },
+        { at: 1.60, x: 625, h: 480, code: '800' },
+      ];
+      gates.forEach(g => {
+        const s = spring(lt - g.at, 18, 0.65);
+        if (s <= 0.01) return;
+        const gy = groundY - g.h * s;
+        ctx.save();
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.24)';
+        ctx.strokeStyle = '#FF5D73'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.roundRect(g.x - 32, gy, 64, g.h * s, 10); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#FFE4E6'; ctx.font = '900 22px "SF Mono", sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('🔒', g.x, gy + 38);
+        ctx.fillText('#' + g.code, g.x, gy + 74);
+        ctx.restore();
+      });
+
+      // 程序员拼命敲门、克劳德在另一侧浮空得意叉手（远离右侧抖音按钮栏）
+      const bump = Math.sin(t * 16) * 8;
+      drawCoder(310 + bump, groundY - 52, 1.44, t, { mood: 'cry', armR: -40, armL: 35 });
+      drawClaudeChar(765, groundY - 165, 1.44, t, { mode: 'smug', armL: 25, armR: -25 });
+      return;
+    }
+
+    // ---------- 11. 39.52–43.26s：温柔只停在一刹那（夜空烟花绽放与消散）----------
+    if (t < 43.26) {
+      const lt = t - 39.52;
+      drawSky('#0F1530', '#23315E', 1.0, t);
+      drawPlanet(cx, planetY, planetR, '#485272', false, true, t);
+
+      // 多朵更大更绚烂的程序化烟花 + 中央大爱心星芒烟花
+      const bursts = [
+        { t0: 0.10, x: 305, y: 540, col: '#A5B4FC', n: 22, heart: false },
+        { t0: 0.60, x: 775, y: 500, col: '#FDE047', n: 22, heart: false },
+        { t0: 1.05, x: cx,  y: 660, col: '#FF8A65', n: 32, heart: true  },
+      ];
+      bursts.forEach(b => {
+        const age = lt - b.t0;
+        if (age <= 0 || age > 2.5) return;
+        const p = clamp(age / 2.1, 0, 1);
+        const fade = clamp(1 - smooth(0.58, 1.0, p), 0, 1);
+        ctx.save();
+        ctx.globalAlpha = fade;
+        // 烟花中心柔光晕
+        const fg = ctx.createRadialGradient(b.x, b.y, 6, b.x, b.y, 190 * p + 40);
+        fg.addColorStop(0, b.heart ? 'rgba(255, 138, 101, 0.35)' : 'rgba(253, 224, 71, 0.25)');
+        fg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = fg;
+        ctx.beginPath(); ctx.arc(b.x, b.y, 190 * p + 40, 0, Math.PI * 2); ctx.fill();
+
+        for (let i = 0; i < b.n; i++) {
+          const ang = (i * Math.PI * 2) / b.n;
+          let dx, dy;
+          if (b.heart) {
+            dx = 16 * Math.pow(Math.sin(ang), 3) * (4.5 + p * 11.5);
+            dy = -(13 * Math.cos(ang) - 5 * Math.cos(2 * ang) - 2 * Math.cos(3 * ang) - Math.cos(4 * ang)) * (4.5 + p * 11.5);
+          } else {
+            const r = (30 + p * 215);
+            dx = Math.cos(ang) * r; dy = Math.sin(ang) * r;
+          }
+          const grav = p * p * 85;
+          ctx.fillStyle = i % 2 === 0 ? b.col : '#FFF8DC';
+          ctx.beginPath(); ctx.arc(b.x + dx, b.y + dy + grav, 7 * (1 - p * 0.45), 0, Math.PI * 2); ctx.fill();
+        }
+        if (b.heart && age < 1.3) {
+          drawStarburst(b.x, b.y, 54 * (0.4 + p * 0.85), t * 2.2, '#FFD166', null);
+        }
+        ctx.restore();
+      });
+
+      // 克劳德在后半段慢慢消散，留下小方块伸手含泪仰望
+      const clFade = 1 - smooth(2.1, 3.4, lt);
+      drawCoder(410, groundY - 52, 1.46, t, { mood: lt > 2.1 ? 'cry' : 'happy', armR: lt > 2.1 ? -65 : 15 });
+      if (clFade > 0.02) {
+        drawClaudeChar(670, groundY - 58 - (1 - clFade) * 140, 1.46, t, { mode: 'sweet', alpha: clFade });
+      }
+      return;
+    }
+
+    // ---------- 12. 43.26–47.36s：我却已无法自拔（深蓝红线缠绕坠落！）----------
+    if (t < 47.36) {
+      const lt = t - 43.26;
+      drawSky('#12223C', '#1D3C63', 0.9, t);
+
+      // 飘散失重的小道具（小黄伞、爱心、小星）
+      drawUmbrella(840, 880 + Math.sin(t * 2) * 28, 0.72);
+      drawHeart(230, 740 - lt * 26, 26, '#FF6B8B', INK);
+      drawStarburst(cx, 380, 48 + Math.sin(t * 5) * 6, t * 2.2, '#FF9F7A', '#FFF4E6');
+
+      // 气泡上升
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.55)'; ctx.lineWidth = 3;
+      for (let i = 0; i < 12; i++) {
+        const bx = 240 + hash(i * 19) * 600;
+        const by = 1480 - ((t * 140 + hash(i * 7) * 1000) % 1100);
+        ctx.beginPath(); ctx.arc(bx, by, 6 + (i % 3) * 4, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      // 程序员小方块缓缓下坠 + 粉橙宿命红线紧紧缠绕并连向顶部星芒！
+      const cy = 830 + Math.sin(lt * 2.2) * 32 + lt * 22;
+      const rot = -0.18 + Math.sin(lt * 1.8) * 0.12;
+      drawCoder(cx, cy, 1.5, t, { mood: 'cry', armL: -60, armR: -70, tilt: rot });
+
+      // 宿命粉橙缠绕丝线（从顶上克劳德星芒直连缠绕全身！）
+      ctx.save();
+      ctx.strokeStyle = '#FF8FA3'; ctx.lineWidth = 6.5; ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx, 415);
+      ctx.bezierCurveTo(cx + 80, 560, cx - 70, 680, cx + 10, cy - 82);
+      ctx.stroke();
+      for (let k = 0; k < 3; k++) {
+        const wy = cy - 44 + k * 34;
+        ctx.beginPath();
+        ctx.ellipse(cx, wy, 102, 22, rot, 0.1 * Math.PI, 0.92 * Math.PI);
+        ctx.stroke();
+      }
+      ctx.restore();
+      return;
+    }
+
+    // ---------- 13. 47.36–55.20s：昼夜时钟分屏 → 越防越上瘾星空定版 ----------
+    const lt = t - 47.36;
+    if (lt < 3.1) {
+      // 左右昼夜时差分割屏（致敬原片最戳心的时钟分屏！）
+      ctx.fillStyle = '#93D5FF'; ctx.fillRect(0, 0, cx, H);
+      ctx.fillStyle = '#182144'; ctx.fillRect(cx, 0, cx, H);
+      // 左侧太阳时钟 + 右侧月亮时钟
+      ctx.fillStyle = '#FFD166'; ctx.beginPath(); ctx.arc(240, 520, 54, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#FDE68A'; ctx.beginPath(); ctx.arc(840, 520, 48, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#182144'; ctx.beginPath(); ctx.arc(858, 506, 40, 0, Math.PI * 2); ctx.fill();
+
+      const drawClock = (x, y, hr, dark) => {
+        ctx.save();
+        ctx.fillStyle = dark ? '#26345C' : '#FFFFFF';
+        ctx.strokeStyle = dark ? '#93C5FD' : INK; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.arc(x, y, 68, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        // 12 刻度点
+        ctx.fillStyle = dark ? 'rgba(253, 230, 138, 0.7)' : 'rgba(35, 31, 32, 0.45)';
+        for (let k = 0; k < 12; k++) {
+          const ka = (k * Math.PI * 2) / 12;
+          ctx.beginPath(); ctx.arc(x + Math.cos(ka) * 54, y + Math.sin(ka) * 54, k % 3 === 0 ? 4 : 2.2, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.strokeStyle = dark ? '#FDE68A' : INK; ctx.lineWidth = 5.5; ctx.lineCap = 'round';
+        const a1 = (hr / 12) * Math.PI * 2 - Math.PI / 2;
+        const a2 = t * 2.5;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a1) * 32, y + Math.sin(a1) * 32); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a2) * 46, y + Math.sin(a2) * 46); ctx.stroke();
+        ctx.restore();
+      };
+      drawClock(340, 690, 10, false);
+      drawClock(740, 690, 3, true);
+
+      // 地面与中线玻璃关卡墙
+      ctx.fillStyle = '#58A85E'; ctx.fillRect(0, 1110, cx, 810);
+      ctx.fillStyle = '#334066'; ctx.fillRect(cx, 1110, cx, 810);
+      ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+
+      // 左侧傲娇克劳德、右侧熬夜程序员隔墙牵手，中央合成闪亮爱心！
+      drawClaudeChar(375, 1052, 1.44, t, { mode: 'smug', armR: 15 });
+      drawCoder(705, 1054, 1.44, t, { mood: 'happy', armL: -15 });
+      const hs = spring(lt - 0.5, 16, 0.55);
+      drawHeart(cx, 875, 48 * hs, '#FF8A65', INK);
+    } else {
+      // 最终治愈收尾：星空星球自我拥抱 → 碎心修复成璀璨克劳德星芒 + 流星定版！
+      const f = lt - 3.1; // 0 .. 4.74s
+      drawSky('#121833', '#23315E', 1.0, t);
+      drawPlanet(cx, planetY, planetR, '#5D6B8B', true, true, t);
+
+      // 温暖治愈光环 + 碎心复原为发光星芒
+      const heal = smooth(0.3, 1.8, f);
+      const glow = ctx.createRadialGradient(cx, groundY - 70, 20, cx, groundY - 70, 300);
+      glow.addColorStop(0, `rgba(255, 214, 140, ${(0.42 * heal).toFixed(3)})`);
+      glow.addColorStop(1, 'rgba(255, 214, 140, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(cx, groundY - 70, 300, 0, Math.PI * 2); ctx.fill();
+
+      if (heal < 0.55) {
+        drawHeart(cx, 820, 46, '#FF6B8B', INK, true);
+      } else {
+        drawStarburst(cx, 820, 56 * spring(f - 0.9, 14, 0.6), t * 1.8, '#FF9F7A', '#FFF6E8');
+      }
+
+      drawCoder(cx, groundY - 52, 1.44, t, { mood: f < 2.2 ? 'hug' : 'happy', armL: -48, armR: 48 });
+
+      // 结尾流星划过
+      if (f > 1.8) {
+        const mp = smooth(1.8, 3.8, f);
+        const mx = lerp(160, 920, mp), my = lerp(340, 470, mp);
+        const lg = ctx.createLinearGradient(mx - 160, my - 25, mx, my);
+        lg.addColorStop(0, 'rgba(255,235,170,0)'); lg.addColorStop(1, '#FFF3C4');
+        ctx.strokeStyle = lg; ctx.lineWidth = 7; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(mx - 160, my - 25); ctx.lineTo(mx, my); ctx.stroke();
+      }
+    }
+  }
+
+  // ===== 主渲染入口 window.render(t) =====
+  window.render = function render(t) {
+    const T = clamp(t, 0, DUR);
+    ctx.save();
+    ctx.scale(2, 2); // 2x 高清绘制（2160×3840 物理像素）
+    ctx.clearRect(0, 0, W, H);
+
+    // 1. 主手绘卡通动画场景
+    drawScene(T);
+
+    // 2. 细腻纸纹叠层（营造治愈绘本质感）
+    ctx.fillStyle = grainPat;
+    ctx.fillRect(0, 0, W, H);
+
+    // 3. 结尾柔和暗场收束
+    if (T > 54.4) {
+      ctx.fillStyle = `rgba(12, 14, 28, ${smooth(54.4, 55.2, T).toFixed(3)})`;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.restore();
+
+    // 4. 顶栏律动 EQ 与时间码
+    const beatFrac = (T * 2) % 1;
+    const kick = Math.exp(-beatFrac * 5.0);
+    document.getElementById('eq1').style.height = `${Math.round(7 + kick * 12)}px`;
+    document.getElementById('eq2').style.height = `${Math.round(10 + Math.abs(Math.sin(T * 7)) * 10)}px`;
+    document.getElementById('eq3').style.height = `${Math.round(6 + kick * 9)}px`;
+    const mm = String(Math.floor(T / 60)).padStart(2, '0');
+    const ss = String(Math.floor(T % 60)).padStart(2, '0');
+    document.getElementById('mood-pill').textContent = `120 BPM · ${mm}:${ss}`;
+
+    // 5. 副歌反转大字提示（仅在关键反转点出现，强化情绪爆发）
+    const hb = document.getElementById('hero-banner');
+    const hbMain = document.getElementById('hb-main');
+    const hbSub = document.getElementById('hb-sub');
+    if (T >= 32.20 && T < 35.50) {
+      const s = spring(T - 32.20, 18, 0.65);
+      hb.style.opacity = clamp(s * 1.6, 0, 1);
+      hb.style.transform = `scale(${(0.86 + 0.14 * s).toFixed(4)})`;
+      hbMain.textContent = '克劳德太绝情啦';
+      hbSub.textContent = 'CHORUS · 800 层防线瞬间拉满';
+    } else if (T >= 35.50 && T < 39.52) {
+      const s = spring(T - 35.50, 16, 0.72);
+      hb.style.opacity = clamp(s * 1.5, 0, 1);
+      hb.style.transform = `scale(${(0.92 + 0.08 * s).toFixed(4)})`;
+      hbMain.textContent = '千方百计将我拦下';
+      hbSub.textContent = '防线拉满 · 却拦不住上瘾的心';
+    } else {
+      hb.style.opacity = 0;
+    }
+
+    // 6. 结尾定版卡（51.0s 起平滑浮现）
+    const oc = document.getElementById('outro-card');
+    if (T >= 50.8) {
+      const os = spring(T - 50.8, 12, 0.85);
+      oc.style.opacity = clamp(os * 1.5, 0, 1) * (1 - smooth(54.5, 55.2, T));
+      oc.style.transform = `translateY(${((1 - os) * 28).toFixed(1)}px)`;
+    } else {
+      oc.style.opacity = 0;
+    }
+
+    // 7. 卡拉 OK 歌词胶囊
+    let cur = null, nxt = null;
+    for (let i = 0; i < LYRICS.length; i++) {
+      if (T >= LYRICS[i].s && T < LYRICS[i].e) {
+        cur = LYRICS[i];
+        nxt = LYRICS[i + 1] || null;
+        break;
+      }
+    }
+    const bar = document.getElementById('lyric-bar');
+    const txtEl = document.getElementById('lyric-text');
+    const nxtEl = document.getElementById('lyric-next');
+    if (cur) {
+      bar.style.display = 'flex';
+      const entry = spring(T - cur.s, 18, 0.78);
+      bar.style.opacity = clamp(entry * 1.6, 0, 1);
+      bar.style.transform = `translateY(${((1 - entry) * 18).toFixed(1)}px)`;
+      const htmlText = cur.text.replace(cur.hl, `<span class="${T >= 32.2 ? 'hl-orange' : 'lit'}">${cur.hl}</span>`);
+      if (txtEl.innerHTML !== htmlText) txtEl.innerHTML = htmlText;
+      // 根据字数微调字号避免超出安全区宽度
+      txtEl.style.fontSize = cur.text.length >= 14 ? '38px' : '44px';
+      nxtEl.textContent = nxt ? `下一句 · ${nxt.text}` : '';
+    } else {
+      bar.style.display = 'none';
+    }
+  };
+
+  window.render(0);
+  const done = () => { window.render(0); window.ready = true; };
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(done);
+  } else {
+    done();
+  }
+
+  // 仅当手动浏览器带 ?play=1 打开预览时循环播放，绝不干扰 Playwright 逐帧截图
+  if (location.search.includes('play=1')) {
+    const t0 = performance.now();
+    const tick = (now) => { window.render(((now - t0) / 1000) % DUR); requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }
+})();
+</script>
+</body>
+</html>

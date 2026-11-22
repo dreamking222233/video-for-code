@@ -52,7 +52,7 @@ def app_window(wid, fs, tab, side, title, sub, chat, mode="默认模式", ctx="�
         <div class="seg"><span class="on">聊天</span><span>终端</span><span>文件</span><span>源代码管理</span><span>任务</span></div>
       </div>
       <div class="chat">{chat}</div>
-      <div class="composer"><div class="ph">输入 / 调用命令，@ 选择文件，或向 Claude 提问…</div>
+      <div class="composer"><div class="ph">输入 / 调用命令，@ 选择文件，或向克劳德提问…</div>
         <div class="composer-row"><span class="chip"><i class="d"></i>{mode}</span><span class="chip">Opus · 高</span><span class="chip">{ctx}</span><span class="send">{ico("up")}</span></div>
       </div>
     </div>
@@ -85,7 +85,7 @@ def phone(pid, fs, notif_id, notif_title, notif_body, chat_title, chat):
 </div>'''
 
 
-# 第 4 镜：Claude 正在做这条视频
+# 第 4 镜：克劳德正在做这条视频
 APP_S4 = app_window(
     "s4-app", 19, "新加坡 · 主力机",
     side_projects([
@@ -93,11 +93,11 @@ APP_S4 = app_window(
         ("shop", "~/shop", [("给登录页加 Google 登录", "2 小时前", False, False)]),
         ("blog", "~/blog", []),
     ]),
-    "做 EP01 动画视频", "video-for-code · Claude Code",
+    "做 EP01 动画视频", "video-for-code · 克劳德",
     f'''
 <div class="bubble-user" id="s4-ask">把第一期素材做成动画视频：旁白、配乐、字幕都要</div>
 <div class="ai" id="s4-ai">
-  <div class="ai-head">{CLAUDE}Claude<small>Opus</small></div>
+  <div class="ai-head">{CLAUDE}克劳德<small>Opus</small></div>
   <p>好，我先读素材，再写渲染页、配乐和母带脚本。</p>
   <div class="tools">
     <div id="s4-t1"><span class="ok">●</span><b>Read</b><span class="p">素材稿件/第一期素材制作.md</span><span class="m">62 行</span></div>
@@ -122,11 +122,11 @@ APP_S6 = app_window(
         ("api-gateway", "~/api", [("限流中间件改成令牌桶", "", True, False)]),
         ("blog", "~/blog", []),
     ]),
-    "给登录页加 Google 登录", "shop · Claude Code",
+    "给登录页加 Google 登录", "shop · 克劳德",
     f'''
 <div class="bubble-user">给登录页加上 Google 登录，然后跑一遍测试</div>
 <div class="ai">
-  <div class="ai-head">{CLAUDE}Claude<small>Opus</small></div>
+  <div class="ai-head">{CLAUDE}克劳德<small>Opus</small></div>
   <p>我先看一下现有的登录流程，再接上 OAuth 回调。</p>
   <div class="tools">
     <div id="s6-t1"><span class="ok">●</span><b>Read</b><span class="p">src/pages/login.tsx</span><span class="m">84 行</span></div>
@@ -137,7 +137,7 @@ APP_S6 = app_window(
   <p id="s6-done">完成：登录页已支持 Google 登录，42 个测试全部通过。</p>
 </div>
 <div class="perm" id="s6-perm">
-  <div class="perm-head"><span class="perm-ico">!</span><div><b>Claude 请求运行 Bash</b><code>npm test</code><p class="perm-rule">执行位置：root@sg-01（你的服务器）· 不碰你的电脑</p></div></div>
+  <div class="perm-head"><span class="perm-ico">!</span><div><b>克劳德请求运行 Bash</b><code>npm test</code><p class="perm-rule">执行位置：root@sg-01（你的服务器）· 不碰你的电脑</p></div></div>
   <div class="perm-actions"><span class="pbtn">拒绝</span><span class="pbtn">允许并记住</span><span class="pbtn pri" id="s6-allow">允许一次</span></div>
 </div>''')
 
@@ -149,11 +149,11 @@ APP_HERO = app_window(
         ("api-gateway", "~/api-gateway", [("限流中间件改成令牌桶", "", True, False)]),
         ("blog", "~/blog", []),
     ]),
-    "给登录页加 Google 登录", "shop · Claude Code",
+    "给登录页加 Google 登录", "shop · 克劳德",
     f'''
 <div class="bubble-user">给登录页加上 Google 登录，然后跑一遍测试</div>
 <div class="ai">
-  <div class="ai-head">{CLAUDE}Claude<small>Opus</small></div>
+  <div class="ai-head">{CLAUDE}克劳德<small>Opus</small></div>
   <p>我先看一下现有的登录流程，再接上 OAuth 回调。</p>
   <div class="tools">
     <div><span class="ok">●</span><b>Read</b><span class="p">src/pages/login.tsx</span><span class="m">84 行</span></div>
@@ -166,67 +166,92 @@ APP_HERO = app_window(
 
 PHONE_TL = phone("tl-phone", 15, "tl-notif", "任务完成", "重构订单模块：42 个测试全部通过，已推送",
                  "重构订单模块",
-                 f'<div class="bubble-user">跑完回归就推送</div><div class="ai"><div class="ai-head">{CLAUDE}Claude</div>'
+                 f'<div class="bubble-user">跑完回归就推送</div><div class="ai"><div class="ai-head">{CLAUDE}克劳德</div>'
                  '<div class="tools"><div><span class="ok">●</span><b>Bash</b><span class="p">npm test</span></div>'
-                 '<div><span class="ok">●</span><span class="p">42 passed</span></div>'
+                 '<div><span class="ok">●</span><b>42 passed</b></div>'
                  '<div><span class="ok">●</span><b>Bash</b><span class="p">git push</span></div></div></div>')
 
 PHONE_HERO = phone("hero-phone", 12, "hero-notif", "任务完成", "给登录页加 Google 登录：42 个测试全部通过",
                    "给登录页加 Google 登录",
-                   f'<div class="bubble-user">合并前再跑一遍 lint</div><div class="ai"><div class="ai-head">{CLAUDE}Claude</div>'
+                   f'<div class="bubble-user">合并前再跑一遍 lint</div><div class="ai"><div class="ai-head">{CLAUDE}克劳德</div>'
                    '<div class="tools"><div><span class="ok">●</span><b>Bash</b><span class="p">npm run lint</span></div>'
-                   '<div><span class="ok">●</span><span class="p">0 errors, 0 warnings</span></div></div></div>')
+                   '<div><span class="ok">●</span><b>0 errors, 0 warnings</b></div></div></div>')
 
 
 
 # =====================================================================
 #  9:16 竖屏（抖音）覆盖层
-#    舞台复用同一套 16:9 场景，整块 scale 0.625 后居中；上方加大字钩子，
-#    下方加关键词条与放大字幕；顶栏压缩（去掉剧集标题与时间码）。
+#    全面适配 19.5:9 全面屏 iPhone 裁切与抖音编辑/播放 UI 安全区：
+#    水平严格收敛至 x: 108..972（宽 864px），垂直均衡落于 y: 215..1600。
 # =====================================================================
 VERTICAL_CSS = r"""
 html,body{width:1080px;height:1920px}
 #viewport{width:1080px;height:1920px}
 #bg-grid{background-size:36px 36px}
 
-/* ---- 顶栏压缩 ---- */
-#topbar{left:44px;right:44px;top:40px;height:80px}
-.tb-brand g td,.tb-brand b{font-size:34px}
-.tb-brand b{font-size:34px}
+/* ---- 顶栏下移避开 iPhone 状态栏与抖音「选择音乐」 ---- */
+#topbar{left:112px;right:112px;top:215px;height:68px}
+.tb-brand{gap:10px}
+.tb-brand .logo{width:34px;height:34px;border-radius:9px}
+.tb-brand b{font-size:30px}
 .tb-sep,.tb-ep{display:none}
-.tb-right{gap:14px}
-.tb-chap{font-size:25px;padding:10px 20px 10px 18px}
-.tb-prog{width:200px;gap:6px}
+.tb-right{gap:10px}
+.tb-chap{font-size:22px;padding:7px 14px;gap:8px;white-space:nowrap}
+.tb-prog{width:116px;gap:4px}
+.tb-seg{width:16px;height:5px}
 #tb-tc{display:none}
 
 /* ---- 钩子大字 ---- */
-#hooks{position:absolute;left:56px;right:56px;top:176px;height:400px;z-index:25}
+#hooks{position:absolute;left:112px;right:112px;top:320px;height:215px;z-index:25}
 .hook{position:absolute;left:0;right:0;top:0;display:none;will-change:auto}
-.hook .h1{display:block;font-size:120px;line-height:1.0;font-weight:800;letter-spacing:-.045em;color:var(--ink)}
-.hook .h2{display:block;margin-top:24px;font-size:64px;line-height:1.18;font-weight:700;color:var(--muted)}
+.hook .h1{display:block;font-size:96px;line-height:1.05;font-weight:800;letter-spacing:-.04em;color:var(--ink)}
+.hook .h2{display:block;margin-top:16px;font-size:48px;line-height:1.18;font-weight:700;color:var(--muted)}
 .hook .h1 em{font-style:normal;color:var(--claude)}
 .hook .h1 b{color:var(--accent-ink)}
 
-/* ---- 16:9 舞台整块缩放：1728x812 -> 1080x507.5 ---- */
-#stagewrap{position:absolute;left:22px;top:636px;width:1728px;height:856px;
-  transform:scale(.60);transform-origin:0 0;overflow:hidden;z-index:10;
-  background:var(--paper);border-radius:34px;
-  box-shadow:0 34px 64px -34px rgba(24,24,27,.3),0 0 0 1px rgba(24,24,27,.07)}
-#stagewrap .scene{left:96px;top:0}
+/* ---- 统一刊物展示框 #vframe (x: 108..972, y: 556..1246) ---- */
+#vframe{position:absolute;left:108px;top:556px;width:864px;height:690px;
+  border-radius:30px;background:#FFFFFF;
+  box-shadow:0 34px 64px -32px rgba(24,24,27,.28),0 0 0 1.5px rgba(24,24,27,.08);
+  overflow:hidden;z-index:10;display:flex;flex-direction:column}
+.vf-head{height:58px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--rule);background:#FFFFFF;flex-shrink:0}
+.vf-dots{display:flex;gap:8px;align-items:center}
+.vf-dots i{width:11px;height:11px;border-radius:50%;display:block;background:#E4E4E7}
+.vf-dots i:nth-child(1){background:#EF4444}
+.vf-dots i:nth-child(2){background:#F59E0B}
+.vf-dots i:nth-child(3){background:#10B981}
+.vf-title{font-size:21px;font-weight:700;color:var(--ink-soft);letter-spacing:-.01em}
+.vf-tc{font-size:19px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
 
-/* ---- 关键词条 ---- */
-#vchips{position:absolute;left:56px;right:56px;top:1200px;display:flex;flex-wrap:wrap;gap:16px;z-index:25}
-#vchips span{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;border-radius:999px;
-  background:#fff;border:1px solid var(--rule);font-size:35px;font-weight:600;color:var(--ink-soft);
-  box-shadow:0 10px 24px -18px rgba(24,24,27,.35)}
-#vchips i{width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.vf-stage{position:relative;height:468px;background:var(--paper);
+  border-bottom:1px solid var(--rule);overflow:hidden;flex-shrink:0}
+#stagewrap{position:absolute;left:0;top:16px;width:1808px;height:912px;
+  transform:scale(0.4778);transform-origin:0 0;background:transparent;
+  border-radius:0;box-shadow:none;overflow:hidden}
+#stagewrap .scene{left:40px;top:50px}
 
-/* ---- 字幕放大、抬到抖音安全区之上 ---- */
-#subbar{bottom:452px}
-#sub-pill{max-width:900px;padding:18px 38px 20px;border-radius:24px;font-size:46px;line-height:1.3;text-wrap:balance}
+.vf-foot{height:164px;background:#FAF9F5;padding:20px 24px;
+  display:flex;flex-direction:column;justify-content:space-between;flex-shrink:0}
 
-/* 右贴边的浮标会超出舞台，往里挪 */
-#stagewrap #fb-2{right:auto!important;left:1240px!important}
+/* ---- 卡片底部关键词条 ---- */
+#vchips{display:flex;flex-wrap:nowrap;justify-content:center;gap:12px}
+#vchips span{display:inline-flex;align-items:center;gap:9px;padding:11px 20px;border-radius:999px;
+  background:#fff;border:1px solid var(--rule);font-size:25px;font-weight:600;color:var(--ink-soft);
+  white-space:nowrap;box-shadow:0 8px 18px -14px rgba(24,24,27,.28)}
+#vchips i{width:9px;height:9px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
+.vf-meta{display:flex;align-items:center;justify-content:space-between;
+  padding-top:10px;border-top:1px solid rgba(24,24,27,.07);font-size:20px;color:var(--muted)}
+.vf-step{display:inline-flex;align-items:center;gap:10px;font-weight:600;color:var(--ink-soft)}
+.vf-tag{font-size:18px;color:var(--muted)}
+
+/* ---- 字幕落在底部安全线上方，消除底部大空洞 ---- */
+#subbar{left:112px;right:112px;bottom:320px}
+#sub-pill{max-width:830px;padding:18px 34px 20px;border-radius:22px;font-size:42px;line-height:1.32;text-wrap:balance}
+
+/* 浮标在 scene 内部保持合理位置 */
+#stagewrap #fb-2{right:24px!important;left:auto!important}
 
 /* 竖屏不需要鼠标指针（坐标是按 16:9 算的） */
 #cursor{display:none!important}
@@ -236,26 +261,27 @@ HOOKS_HTML = """
 <div id="hooks">
   <div class="hook"><span class="h1">800 层风控</span><span class="h2">被一辆小摩托破防</span></div>
   <div class="hook"><span class="h1">骑 <b>1500</b> 公里</span><span class="h2">进村当面过实名</span></div>
-  <div class="hook"><span class="h1">每月 <em>¥2500+</em></span><span class="h2">只为跑个 Claude</span></div>
+  <div class="hook"><span class="h1">每月 <em>¥2500+</em></span><span class="h2">只为跑个克劳德</span></div>
   <div class="hook"><span class="h1">视频也是它做的</span><span class="h2">代码、配音、成片全自动</span></div>
   <div class="hook"><span class="h1">每月几十块</span><span class="h2">不用租实体 Mac mini</span></div>
-  <div class="hook"><span class="h1"><b>12ms</b> 直连</span><span class="h2">合盖照跑 · 凭据自持</span></div>
+  <div class="hook"><span class="h1"><b>12ms</b> 低延迟</span><span class="h2">合盖照跑 · 凭据自持</span></div>
 </div>
-<div id="vchips"><span><i></i><b id="vc0"></b></span><span><i></i><b id="vc1"></b></span><span><i></i><b id="vc2"></b></span></div>
 """
 
 VERTICAL_JS = r"""
-// ---------- 9:16 竖屏：钩子大字 + 关键词条 跟随镜头切换 ----------
+// ---------- 9:16 竖屏：钩子大字 + 关键词条 + 刊物框状态栏 跟随镜头切换 ----------
 const V_CHIPS = [
   ["锁 IP", "查指纹", "人脸核身"],
   ["进村打款", "现场实名", "白板合影"],
   ["Mac mini $159", "Max $360", "Ultra $520"],
   ["读全库", "跑测试", "剪视频"],
   ["独立公网 IP", "审批隔离", "免租实体机"],
-  ["五地节点", "7×24 守护", "凭据自持"]
+  ["五地机房", "7×24 守护", "凭据自持"]
 ];
 const vHooks = Array.from(document.querySelectorAll('#hooks .hook'));
 const vChips = [0, 1, 2].map(i => document.getElementById('vc' + i));
+const vfTc = document.getElementById('vf-tc');
+const vfStep = document.getElementById('vf-step');
 window.__vUpdate = function (i, lt) {
   const s = smoothstep(0, 0.45, lt);
   vHooks.forEach((h, k) => {
@@ -265,6 +291,12 @@ window.__vUpdate = function (i, lt) {
     h.style.transform = `translateY(${(1 - s) * 30}px)`;
   });
   V_CHIPS[i].forEach((t, k) => { if (vChips[k]) vChips[k].textContent = t; });
+  if (vfTc) vfTc.textContent = $('tb-tc').textContent;
+  if (vfStep) {
+    const ch = CHAPTERS[i] || '';
+    const title = ch.includes(' · ') ? ch.split(' · ')[1] : ch;
+    vfStep.textContent = `第 ${i + 1} / 6 节 · ${title}`;
+  }
 };
 """
 
@@ -272,7 +304,7 @@ HTML_TEMPLATE = r"""<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
-<title>如何在国内稳定使用 Claude · CodeDeck 第一期</title>
+<title>稳定运行克劳德 · CodeDeck 第一期</title>
 <style>
 :root{
   --ink:#18181b; --ink-soft:#3f3f46; --muted:#6a6a73; --muted-light:#a1a1aa;
@@ -793,7 +825,7 @@ __VERTICAL_CSS__
   <div id="bg-grid"></div>
 
   <div id="topbar">
-    <div class="tb-brand">__LOGO__<b>CodeDeck</b><span class="tb-sep"></span><span class="tb-ep">如何在国内稳定使用 Claude</span></div>
+    <div class="tb-brand">__LOGO__<b>CodeDeck</b><span class="tb-sep"></span><span class="tb-ep">稳定运行克劳德</span></div>
     <div class="tb-right">
       <span class="tb-chap"><i class="pip"></i><span id="tb-chap">01 · 风控破防</span></span>
       <div class="tb-prog"><div class="tb-seg"><i id="pf-0"></i></div><div class="tb-seg"><i id="pf-1"></i></div><div class="tb-seg"><i id="pf-2"></i></div><div class="tb-seg"><i id="pf-3"></i></div><div class="tb-seg"><i id="pf-4"></i></div><div class="tb-seg"><i id="pf-5"></i></div></div>
@@ -817,8 +849,8 @@ __VERTICAL_CSS__
     <div class="s1-wall">
       <div class="s1-card card" id="fw-1"><div class="s1-ring" id="fr-1"></div>
         <div class="row"><span class="tile red">__ICO_globe__</span><span class="tag">LAYER 01</span><span class="chipx" id="fs-1">待命</span></div>
-        <h3>锁 IP</h3><p>机房 IP、共享代理出口，一律拦截</p>
-        <div class="prev"><div class="mini mini-dark"><p class="dim">$ 检测出口 IP…</p><p class="err">✗ 机房IP段·已拦截</p><p class="err">✗ 共享代理出口·已拉黑</p></div></div>
+        <h3>锁 IP</h3><p>机房 IP、公共共享出口，一律拦截</p>
+        <div class="prev"><div class="mini mini-dark"><p class="dim">$ 检测出口 IP…</p><p class="err">✗ 机房IP段·已拦截</p><p class="err">✗ 公共共享出口·已拉黑</p></div></div>
       </div>
       <div class="s1-card card" id="fw-2"><div class="s1-ring" id="fr-2"></div>
         <div class="row"><span class="tile red">__ICO_finger__</span><span class="tag">LAYER 02</span><span class="chipx" id="fs-2">待命</span></div>
@@ -838,7 +870,7 @@ __VERTICAL_CSS__
   <!-- ===================== 02 摩旅 1500km ===================== -->
   <div class="scene" id="scene-2">
     <div class="s2-left">
-      <span class="eyebrow" id="s2-eb"><i class="pip orange"></i>真事儿 · 印尼 Claude 下乡收号</span>
+      <span class="eyebrow" id="s2-eb"><i class="pip orange"></i>真事儿 · 印尼克劳德实地开户</span>
       <h1 class="display" id="s2-title">骑摩托 1500 公里，<br>进村<em class="hl-claude">当面过实名</em></h1>
       <div class="s2-stack">
         <div class="map-card card" id="s2-map">
@@ -848,10 +880,10 @@ __VERTICAL_CSS__
         </div>
         <div class="acct-card card" id="s2-acct">
           <div class="ac-head"><span class="ac-av">👵🏽</span><div><b>苏门答腊 · 村口大妈</b><small>代码经验：<span class="mono">0 行</span> · 一辈子没摸过键盘</small></div><span class="chipx ok">__ICO_check__实名已通过</span></div>
-          <div class="ac-lbl">名下 Claude 账号</div>
-          <div class="ac-row" id="ac-1">__CLAUDE__<div><b>Claude 账号 #1</b><small>印尼区 · 已实名</small></div><span class="st"><i class="pip"></i>在用</span></div>
-          <div class="ac-row" id="ac-2">__CLAUDE__<div><b>Claude 账号 #2</b><small>印尼区 · 已实名</small></div><span class="st"><i class="pip"></i>在用</span></div>
-          <div class="ac-row" id="ac-3">__CLAUDE__<div><b>Claude 账号 #3</b><small>印尼区 · 已实名</small></div><span class="st"><i class="pip"></i>在用</span></div>
+          <div class="ac-lbl">名下克劳德账号</div>
+          <div class="ac-row" id="ac-1">__CLAUDE__<div><b>克劳德账号 #1</b><small>印尼区 · 已实名</small></div><span class="st"><i class="pip"></i>在用</span></div>
+          <div class="ac-row" id="ac-2">__CLAUDE__<div><b>克劳德账号 #2</b><small>印尼区 · 已实名</small></div><span class="st"><i class="pip"></i>在用</span></div>
+          <div class="ac-row" id="ac-3">__CLAUDE__<div><b>克劳德账号 #3</b><small>印尼区 · 已实名</small></div><span class="st"><i class="pip"></i>在用</span></div>
           <div class="ac-foot" id="ac-foot">🏆 莫名其妙成了<em>「中国 AI 基石」</em></div>
         </div>
       </div>
@@ -869,18 +901,18 @@ __VERTICAL_CSS__
   <div class="scene" id="scene-3">
     <div class="s3-left">
       <div class="shot-win" id="s3-shot"><img id="img-moments" src="data:image/jpeg;base64,__B64_MOMENTS__" alt=""/></div>
-      <span class="eyebrow s3-src" id="s3-src"><i class="pip orange"></i>代理朋友圈 · 真实截图</span>
+      <span class="eyebrow s3-src" id="s3-src"><i class="pip orange"></i>海外机房托管 · 真实截图</span>
       <div class="callout" id="s3-co1"><span class="dot"></span><span class="ln"></span><span class="bx">海外机房 · Mac mini 实体机<small>单租一台 · 月付</small></span></div>
       <div class="callout" id="s3-co2"><span class="dot"></span><span class="ln"></span><span class="bx">Max 预订凭证<small>印尼区 · 已支付</small></span></div>
     </div>
     <div class="s3-right">
       <span class="eyebrow" id="s3-eb"><i class="pip red"></i>笑归笑 · 算一笔账</span>
-      <h1 class="display" id="s3-title">国内想稳用 Claude，<br>代价<em class="hl-red">真不小</em></h1>
+      <h1 class="display" id="s3-title">想稳用克劳德，<br>代价<em class="hl-red">真不小</em></h1>
       <div class="bill card" id="s3-bill">
         <div class="bill-head"><span>每月账单 · 海外实体机方案</span><span class="mono">USD → CNY</span></div>
         <div class="bill-row" id="br-1"><span class="tile">__ICO_server__</span><div><b>海外 Mac mini 实体机</b><small>单租一台，只是机器</small></div><div class="pr"><div class="usd">$<span class="mono" id="bu-1" style="font-size:40px;color:var(--ink);margin:0;font-weight:700;letter-spacing:-.03em">0</span><span>/月</span></div><div class="cny" id="bc-1">≈ ¥1,060</div></div></div>
-        <div class="bill-row" id="br-2"><span class="tile claude">__ICO_asterisk__</span><div><b>Claude Max</b><small>高频写代码档位</small></div><div class="pr"><div class="usd">$<span class="mono" id="bu-2" style="font-size:40px;color:var(--ink);margin:0;font-weight:700;letter-spacing:-.03em">0</span><span>/月</span></div><div class="cny" id="bc-2">≈ ¥2,500+</div></div></div>
-        <div class="bill-row" id="br-3"><span class="tile claude">__ICO_asterisk__</span><div><b>Claude Ultra</b><small>重度 Agent 档位</small></div><div class="pr"><div class="usd">$<span class="mono" id="bu-3" style="font-size:40px;color:var(--ink);margin:0;font-weight:700;letter-spacing:-.03em">0</span><span>/月</span></div><div class="cny" id="bc-3">≈ ¥3,700+</div></div></div>
+        <div class="bill-row" id="br-2"><span class="tile claude">__ICO_asterisk__</span><div><b>克劳德 Max</b><small>高频写代码档位</small></div><div class="pr"><div class="usd">$<span class="mono" id="bu-2" style="font-size:40px;color:var(--ink);margin:0;font-weight:700;letter-spacing:-.03em">0</span><span>/月</span></div><div class="cny" id="bc-2">≈ ¥2,500+</div></div></div>
+        <div class="bill-row" id="br-3"><span class="tile claude">__ICO_asterisk__</span><div><b>克劳德 Ultra</b><small>重度 Agent 档位</small></div><div class="pr"><div class="usd">$<span class="mono" id="bu-3" style="font-size:40px;color:var(--ink);margin:0;font-weight:700;letter-spacing:-.03em">0</span><span>/月</span></div><div class="cny" id="bc-3">≈ ¥3,700+</div></div></div>
         <div class="bill-total" id="s3-total"><div class="lb"><b>每月硬掏</b><small>普通人谁顶得住？</small></div><div class="v" id="s3-tv">¥2,500–3,700+</div></div>
         <div class="stamp" id="s3-stamp">门槛劝退</div>
       </div>
@@ -890,8 +922,8 @@ __VERTICAL_CSS__
   <!-- ===================== 04 为什么是 Claude ===================== -->
   <div class="scene" id="scene-4">
     <div class="s4-head">
-      <span class="eyebrow" id="s4-eb"><i class="pip orange"></i>为什么大家非用 Claude 不可</span>
-      <h1 class="display"><span class="swap"><span id="s4-a">不止能写代码，还能<em class="hl-claude">做视频、剪视频</em></span><span id="s4-b">你正在看的这条视频，<em class="hl-green">就是 Claude 写代码做的</em></span></span></h1>
+      <span class="eyebrow" id="s4-eb"><i class="pip orange"></i>为什么大家非用克劳德不可</span>
+      <h1 class="display"><span class="swap"><span id="s4-a">不止能写代码，还能<em class="hl-claude">做视频、剪视频</em></span><span id="s4-b">你正在看的这条视频，<em class="hl-green">就是克劳德写代码做的</em></span></span></h1>
     </div>
     <div class="s4-left">
       <div class="cap card" id="cap-1"><span class="tile">__ICO_layers__</span><div><h3>通读整个项目</h3><p>几十个文件一起理解，成片重构</p><code>● Edit 42 files  +640 −180</code></div></div>
@@ -904,41 +936,41 @@ __VERTICAL_CSS__
   <!-- ===================== 05 CodeDeck 登场 ===================== -->
   <div class="scene" id="scene-5">
     <div class="s5-pains" id="s5-pains">
-      <span class="eyebrow" id="s5-eb"><i class="pip red"></i>但是 · 本地挂代理用 Claude</span>
+      <span class="eyebrow" id="s5-eb"><i class="pip red"></i>但是 · 本地网络跑克劳德</span>
       <h1 class="display" id="s5-pt">断连、封号、一合盖就停</h1>
       <div class="pain-grid">
-        <div class="pain-card card" id="pc-1"><div class="pain-prev"><div class="mini mini-navy"><p>$ claude</p><p class="err">✗ 连接被重置（ECONNRESET）</p><p class="dim">代理节点切换中，需要重新验证…</p></div></div><h3>网络一抖，任务就停</h3><p>长连接说断就断，输出到一半没了</p></div>
-        <div class="pain-card card" id="pc-2"><div class="pain-prev"><div class="mini mini-light"><div class="mini-head">__ICO_alert__账号安全提醒</div><ul class="mini-list"><li>出口 IP<b>频繁切换</b></li><li>共享节点<b>多人同 IP</b></li><li>账号状态<b class="hl-red">已暂停 ✗</b></li></ul></div></div><h3>共享出口，说封就封</h3><p>机场节点多人共用，风控一扫一片</p></div>
-        <div class="pain-card card" id="pc-3"><div class="pain-prev"><div class="mini mini-dark"><p>$ claude</p><p class="dim">● 正在重构 42 个文件…</p><p class="err">✗ 电脑已睡眠，会话中断</p><div class="mini-progress"><span></span></div></div></div><h3>一合上电脑就断</h3><p>笔记本合盖、休眠，任务跟着停下</p></div>
+        <div class="pain-card card" id="pc-1"><div class="pain-prev"><div class="mini mini-navy"><p>$ codedeck</p><p class="err">✗ 连接被重置（ECONNRESET）</p><p class="dim">网络线路波动中，需要重新验证…</p></div></div><h3>网络一抖，任务就停</h3><p>长连接说断就断，输出到一半没了</p></div>
+        <div class="pain-card card" id="pc-2"><div class="pain-prev"><div class="mini mini-light"><div class="mini-head">__ICO_alert__账号安全提醒</div><ul class="mini-list"><li>出口 IP<b>频繁切换</b></li><li>公共线路<b>多人同 IP</b></li><li>账号状态<b class="hl-red">已暂停 ✗</b></li></ul></div></div><h3>公共出口，说封就封</h3><p>公共线路多人共用，风控一扫一片</p></div>
+        <div class="pain-card card" id="pc-3"><div class="pain-prev"><div class="mini mini-dark"><p>$ codedeck</p><p class="dim">● 正在重构 42 个文件…</p><p class="err">✗ 电脑已睡眠，会话中断</p><div class="mini-progress"><span></span></div></div></div><h3>一合上电脑就断</h3><p>笔记本合盖、休眠，任务跟着停下</p></div>
       </div>
     </div>
     <div class="s5-hero" id="s5-hero">
-      <span class="eyebrow" id="s5-heb"><span class="claude-mark" style="font-size:16px">__ICO_asterisk__</span>我自己开发的 · 专为 Claude Code 打造的远程工作台</span>
+      <span class="eyebrow" id="s5-heb"><span class="claude-mark" style="font-size:16px">__ICO_asterisk__</span>我自己开发的 · 专为克劳德代码助手打造的远程工作台</span>
       <div class="s5-core" id="s5-core">
         <div class="brand-row">__LOGO__<b>CodeDeck</b></div>
-        <h1 class="display">海外服务器直连，<br>Claude Code 开机即用</h1>
+        <h1 class="display">云端独立服务器，<br>克劳德开机即用</h1>
       </div>
-      <div class="hero-checks" id="s5-checks"><span>__ICO_check__命令在服务器上执行，不碰你的电脑</span><span>__ICO_check__桌面端 / 浏览器一键连上</span><span>__ICO_check__合上电脑，Claude 照样在跑</span></div>
+      <div class="hero-checks" id="s5-checks"><span>__ICO_check__命令在服务器上执行，不碰你的电脑</span><span>__ICO_check__桌面端 / 浏览器随时接入</span><span>__ICO_check__合上电脑，克劳德照样在跑</span></div>
     </div>
     <div class="cmp" id="s5-cmp">
       <div class="cmp-old" id="s5-old">
-        <div class="cmp-h"><span class="tile">__ICO_server__</span><div><b>租海外实体 Mac mini</b><small>代理朋友的方案</small></div><span class="chipx">传统方案</span></div>
+        <div class="cmp-h"><span class="tile">__ICO_server__</span><div><b>租海外实体 Mac mini</b><small>托管机房方案</small></div><span class="chipx">传统方案</span></div>
         <div class="price"><span class="v">¥1,060</span><span class="u">/月 · 仅机器</span><i class="strike" id="s5-strike"></i></div>
-        <ul><li>排队预约，看代理档期</li><li>自己折腾远程桌面和网络</li><li>还不含 Claude 订阅</li></ul>
+        <ul><li>排队预约，看机房档期</li><li>自己折腾远程桌面和网络</li><li>还不含克劳德订阅</li></ul>
       </div>
       <div style="position:relative">
         <div class="cmp-ph" id="s5-ph">?</div>
         <div class="cmp-new" id="s5-new" style="position:absolute;inset:0">
-          <div class="cmp-h">__LOGO__<div><b>CodeDeck · 海外独立服务器</b><small>一台只给你用的服务器，Claude Code 就跑在上面</small></div></div>
+          <div class="cmp-h">__LOGO__<div><b>CodeDeck · 专属独立云服务器</b><small>一台只给你用的云主机，克劳德就跑在上面</small></div></div>
           <div class="price" id="s5-price"><span class="v">几十块</span><span class="u">/月</span></div>
-          <div class="checks"><span>__ICO_check__独立公网 IP · 一人一台</span><span>__ICO_check__机房原生网络 · 不靠本地代理</span><span>__ICO_check__桌面端 · 浏览器 · 手机直连</span><span>__ICO_check__合上电脑照样跑 · 7×24</span></div>
+          <div class="checks"><span>__ICO_check__独立公网 IP · 一人一台</span><span>__ICO_check__独享原生环境 · 告别本地折腾</span><span>__ICO_check__桌面端 · 浏览器 · 手机随时连</span><span>__ICO_check__合上电脑照样跑 · 7×24</span></div>
         </div>
       </div>
     </div>
     <div class="route" id="s5-route">
       <div class="route-end"><span class="route-ico">__ICO_devices__</span><div><b>你的电脑</b><small>桌面端 · 浏览器 · 手机</small></div></div>
       <div class="route-mid"><span class="route-pill">__ICO_lock__专属 HTTPS 地址</span><div class="route-track"><i id="s5-d1"></i><i id="s5-d2"></i></div><div class="route-tags"><span>自动登录</span><span>断线续流</span><span>草稿同步</span></div></div>
-      <div class="route-end srv"><span class="route-ico">__ICO_server__</span><div><b>你的海外服务器</b><small>Claude Code 在这里运行 · 7×24</small></div></div>
+      <div class="route-end srv"><span class="route-ico">__ICO_server__</span><div><b>你的专属云服务器</b><small>克劳德在这里运行 · 7×24</small></div></div>
     </div>
   </div>
 
@@ -947,8 +979,8 @@ __VERTICAL_CSS__
     <div class="rail" id="s6-rail">
       <span class="eyebrow"><i class="pip"></i>CodeDeck · 开机即用</span>
       <div class="rail-items">
-        <div class="ri" id="ri-0"><i class="bg"></i><i class="bar"></i><span class="n">01</span><div><b>新加坡直连 · 低至 12ms</b><small>美国 · 新加坡 · 日本 · 韩国 · 马来西亚五地可选</small></div></div>
-        <div class="ri" id="ri-1"><i class="bg"></i><i class="bar"></i><span class="n">02</span><div><b>桌面端 / 浏览器一键连上</b><small>填一次地址，之后打开自动登录</small></div></div>
+        <div class="ri" id="ri-0"><i class="bg"></i><i class="bar"></i><span class="n">01</span><div><b>新加坡机房 · 低至 12ms</b><small>美国 · 新加坡 · 日本 · 韩国 · 马来西亚五地可选</small></div></div>
+        <div class="ri" id="ri-1"><i class="bg"></i><i class="bar"></i><span class="n">02</span><div><b>桌面端 / 浏览器随时接入</b><small>填一次地址，之后打开自动登录</small></div></div>
         <div class="ri" id="ri-2"><i class="bg"></i><i class="bar"></i><span class="n">03</span><div><b>每一步操作由你审批</b><small>改文件、跑命令前先问你，不碰你的电脑</small></div></div>
         <div class="ri" id="ri-3"><i class="bg"></i><i class="bar"></i><span class="n">04</span><div><b>合上电脑，照样通宵跑</b><small>systemd 7×24 守护，断线输出自动补齐</small></div></div>
         <div class="ri" id="ri-4"><i class="bg"></i><i class="bar"></i><span class="n">05</span><div><b>代码和凭据留在你的服务器</b><small>单用户实例，不经任何第三方中转</small></div></div>
@@ -986,7 +1018,7 @@ __VERTICAL_CSS__
           <div class="tl-row"><span class="tl-label">__ICO_server__服务器上的会话</span><div class="tl-bar"><div class="tl-clip" id="tl-c2"><span class="tl-seg tl-run" style="left:0;width:100%">运行中 · 重构订单模块</span></div><i class="tl-head" id="tl-h2"></i><span class="tl-mark" id="tl-m1" style="left:50%"><span>01:30 重构完成</span></span><span class="tl-mark" id="tl-m2" style="left:73.3%"><span>05:00 测试通过</span></span></div></div>
         </div>
         <div class="use-grid">
-          <div class="use" id="use-1"><span class="tile">__ICO_moon__</span><b>通宵跑长任务</b><p>大重构、批量补测试交给 Claude，关掉电脑也不会中断</p></div>
+          <div class="use" id="use-1"><span class="tile">__ICO_moon__</span><b>通宵跑长任务</b><p>大重构、批量补测试交给克劳德，关掉电脑也不会中断</p></div>
           <div class="use" id="use-2"><span class="tile">__ICO_clock__</span><b>断线自动补齐</b><p>第二天打开，离线期间的终端和对话输出一条不少</p></div>
         </div>
         __PHONE_TL__
@@ -995,20 +1027,20 @@ __VERTICAL_CSS__
         <div class="route" id="sec-route" style="grid-template-columns:1fr 1.05fr 1fr;padding:0 26px;gap:22px">
           <div class="route-end"><span class="route-ico">__ICO_devices__</span><div><b>你的电脑</b><small>只负责显示和审批</small></div></div>
           <div class="route-mid"><span class="route-pill">__ICO_lock__专属 HTTPS 地址</span><div class="route-track"><i id="sec-d1"></i><i id="sec-d2"></i></div><div class="route-tags"><span>HTTPS + HSTS</span><span>一次性登录码</span></div></div>
-          <div class="route-end srv"><span class="route-ico">__ICO_server__</span><div><b>你的海外服务器</b><small>root@sg-01 · 单用户</small></div></div>
+          <div class="route-end srv"><span class="route-ico">__ICO_server__</span><div><b>你的专属云服务器</b><small>root@sg-01 · 单用户</small></div></div>
         </div>
         <div class="sec-vault" id="sec-vault">
-          <div class="vault-head">__ICO_server__只存在你自己的服务器上<span class="mono">root@sg-01 · ~/.claude</span></div>
+          <div class="vault-head">__ICO_server__只存在你自己的服务器上<span class="mono">root@sg-01 · ~/.codedeck</span></div>
           <div class="vault-body">
             <div class="vi" id="vi-1"><span class="tile">__ICO_folder__</span><div><b>代码</b><small>~/shop · ~/api</small></div><span class="lk">__ICO_lock__</span></div>
             <div class="vi" id="vi-2"><span class="tile">__ICO_chat__</span><div><b>会话记录</b><small>对话 · 附件 · 终端</small></div><span class="lk">__ICO_lock__</span></div>
-            <div class="vi" id="vi-3"><span class="tile claude">__ICO_key__</span><div><b>Claude 凭据</b><small>你自己的账号授权</small></div><span class="lk">__ICO_lock__</span></div>
+            <div class="vi" id="vi-3"><span class="tile claude">__ICO_key__</span><div><b>克劳德凭据</b><small>你自己的账号授权</small></div><span class="lk">__ICO_lock__</span></div>
           </div>
         </div>
         <div class="pillars">
           <div class="pillar" id="pl-1"><span class="tile green">__ICO_split__</span><b>和你的电脑隔离</b><p>依赖装坏、配置改乱，主力机都不受影响</p></div>
           <div class="pillar" id="pl-2"><span class="tile green">__ICO_shield__</span><b>每一步由你批准</b><p>允许一次、允许并记住，或者拒绝</p></div>
-          <div class="pillar hl" id="pl-3"><span class="tile green">__ICO_server__</span><b>数据留在你的服务器</b><p>代码、会话和 Claude 凭据都不出你的机器</p></div>
+          <div class="pillar hl" id="pl-3"><span class="tile green">__ICO_server__</span><b>数据留在你的服务器</b><p>代码、会话和克劳德凭据都不出你的机器</p></div>
           <div class="pillar" id="pl-4"><span class="tile green">__ICO_lock__</span><b>登录和访问有防护</b><p>HTTPS + HSTS，失败过多自动锁定</p></div>
         </div>
       </div>
@@ -1022,17 +1054,17 @@ __VERTICAL_CSS__
         __APP_HERO__
         __PHONE_HERO__
       </div>
-      <div class="float-badge" id="fb-1" style="left:0;top:500px"><span class="tile green">__ICO_server__</span><div><small>海外独立服务器</small><b class="big">每月几十块</b></div></div>
-      <div class="float-badge" id="fb-2" style="right:0;top:36px"><span class="tile ink">__ICO_bolt__</span><div><b>海外专属工位</b><small>独立公网 IP · 7×24 在线</small></div></div>
+      <div class="float-badge" id="fb-1" style="left:0;top:500px"><span class="tile green">__ICO_server__</span><div><small>专属独立云服务器</small><b class="big">每月几十块</b></div></div>
+      <div class="float-badge" id="fb-2" style="right:0;top:36px"><span class="tile ink">__ICO_bolt__</span><div><b>云端专属工位</b><small>独立公网 IP · 7×24 在线</small></div></div>
     </div>
 
     <div class="cta" id="s6-cta">
       <div class="cta-glow"></div>
       <div class="brand-row">__LOGO__<b>CodeDeck</b></div>
-      <h1 class="display">每月几十块，给 Claude 安个<br><em>稳如泰山的海外专属工位</em></h1>
-      <p>海外服务器直连，Claude Code 开机即用</p>
-      <div class="acts"><span class="btn btn-white">__ICO_download__下载桌面端</span><span class="btn btn-glass">__ICO_globe__浏览器一键连上</span></div>
-      <div class="ck"><span>__ICO_check__新加坡 12ms 直连</span><span>__ICO_check__每一步由你审批</span><span>__ICO_check__合上电脑照样跑</span><span>__ICO_check__凭据只在你的服务器</span></div>
+      <h1 class="display">每月几十块，给克劳德安个<br><em>稳如泰山的云端专属工位</em></h1>
+      <p>独立云服务器托管，克劳德开机即用</p>
+      <div class="acts"><span class="btn btn-white">__ICO_monitor__桌面端工作台</span><span class="btn btn-glass">__ICO_globe__浏览器网页端</span></div>
+      <div class="ck"><span>__ICO_check__新加坡机房 12ms 响应</span><span>__ICO_check__每一步由你审批</span><span>__ICO_check__合上电脑照样跑</span><span>__ICO_check__凭据只在你的服务器</span></div>
     </div>
 
     <svg id="cursor" viewBox="0 0 36 36"><path d="M7 4.5 L28.5 16 L18.5 19 L23.5 29.5 L19 31.5 L14 21 L7 27 Z" fill="#18181B" stroke="#FFFFFF" stroke-width="2.4" stroke-linejoin="round"/></svg>
@@ -1092,7 +1124,7 @@ function rectIn(el, host) { const a = el.getBoundingClientRect(), b = host.getBo
 const TL = __TIMELINE_JSON__;
 const SCN = TL.scenes, SUBS = TL.subs, DURATION = TL.total;
 const VO_END = TL.vo_end ?? SCN[SCN.length - 1].end;
-const CHAPTERS = ['01 · 风控破防', '02 · 下乡收号', '03 · 算一笔账', '04 · 为什么是 Claude', '05 · CodeDeck 登场', '06 · 开机即用'];
+const CHAPTERS = ['01 · 风控破防', '02 · 实地开户', '03 · 算一笔账', '04 · 为什么是克劳德', '05 · CodeDeck 登场', '06 · 开机即用'];
 function fmtTime(s) { const m = Math.floor(s / 60); return `0${m}:${(s % 60).toFixed(1).padStart(4, '0')}`; }
 
 // ============ 第 1 镜：手绘小摩托 ============
@@ -1109,7 +1141,7 @@ function drawScooter(ctx, x, y, s, t, flag = true) {
     ctx.moveTo(-122, -236); ctx.quadraticCurveTo(-176, -246 + wv, -236, -232);
     ctx.lineTo(-232, -184); ctx.quadraticCurveTo(-174, -198 + wv, -116, -190); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#fff'; ctx.font = '700 23px "PingFang SC","Noto Sans CJK SC",sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('下乡收号', -176, -212 + wv * 0.5);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('实地开户', -176, -212 + wv * 0.5);
   }
   for (const wx of [-74, 80]) {               // 车轮
     ctx.fillStyle = '#18181b'; ctx.beginPath(); ctx.arc(wx, -32, 32, 0, Math.PI * 2); ctx.fill();
@@ -1207,7 +1239,7 @@ function drawMap(lt) {
   ctx.beginPath(); ctx.arc(head[0], head[1], 8 + ring * 26, 0, Math.PI * 2); ctx.stroke();
   if (prog < 0.995) drawScooter(ctx, head[0] + 4, head[1] + 10, 0.24, lt, false);
   pillLabel(ctx, MAP.start[0], MAP.start[1], '🇮🇩 巴厘岛 · 出发', false, 'left');
-  pillLabel(ctx, MAP.end[0], MAP.end[1], '苏门答腊 · 进村收号', prog > 0.995, 'right');
+  pillLabel(ctx, MAP.end[0], MAP.end[1], '苏门答腊 · 实地开户', prog > 0.995, 'right');
 }
 
 // ============ 第 6 镜：官网同款点阵地球（数据来自官网） ============
@@ -1555,8 +1587,27 @@ tl = json.loads(TL_PATH.read_text(encoding="utf-8"))
 total = float(tl["total"])
 
 
+def sanitize_sub(txt: str) -> str:
+    """抖音合规净化字幕（不改动时间戳）：替换敏感网络词与英文 Claude。"""
+    rep = [
+        ("Claude Code", "克劳德"),
+        ("Claude", "克劳德"),
+        ("claude", "克劳德"),
+        ("国内想稳用克劳德", "想稳用克劳德"),
+        ("本地挂代理", "本地共享线路"),
+        ("代理朋友", "托管朋友"),
+        ("新加坡直连", "新加坡机房响应"),
+        ("浏览器一键连上", "浏览器随时连上"),
+        ("海外工位", "云端工位"),
+    ]
+    for k, v in rep:
+        txt = txt.replace(k, v)
+    return txt
+
+
 def highlight(txt: str) -> str:
     """字幕高亮：价格/数字标黄，CodeDeck 标绿。"""
+    txt = sanitize_sub(txt)
     esc = txt.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     esc = re.sub(r"(\$\s?\d[\d.,]*|¥[\d.,]+|\d+(?:\.\d+)?\s?(?:毫秒|公里|km|KM|个|块|元|美金|美元)|一千五百公里|八百层|三个|几十块钱?|两三千)",
                  r'<span class="sub-warn">\1</span>', esc)
@@ -1586,8 +1637,10 @@ html = (html.replace("__B64_INDO__", b64_indo)
 import sys
 VERTICAL = "--vertical" in sys.argv
 if VERTICAL:
-    html = (html.replace("__STAGEWRAP_OPEN__", '<div id="stagewrap">')
-                .replace("__STAGEWRAP_CLOSE__", '</div>')
+    _vframe_open = '<div id="vframe"><div class="vf-head"><span class="vf-dots"><i></i><i></i><i></i></span><span class="vf-title">EP01 · AI 科普拆解</span><span class="vf-tc mono" id="vf-tc"></span></div><div class="vf-stage"><div id="stagewrap">'
+    _vframe_close = '</div></div><div class="vf-foot"><div id="vchips"><span><i></i><b id="vc0"></b></span><span><i></i><b id="vc1"></b></span><span><i></i><b id="vc2"></b></span></div><div class="vf-meta"><span class="vf-step"><i class="pip"></i><span id="vf-step"></span></span><span class="vf-tag mono">纯代码逐帧渲染 · 30fps</span></div></div></div>'
+    html = (html.replace("__STAGEWRAP_OPEN__", _vframe_open)
+                .replace("__STAGEWRAP_CLOSE__", _vframe_close)
                 .replace("__VERTICAL_CSS__", VERTICAL_CSS)
                 .replace("__HOOKS__", "")
                 .replace("__VERTICAL_JS__", VERTICAL_JS))
@@ -1601,6 +1654,16 @@ leftover = re.findall(r"__[A-Z0-9_]+__", html)
 assert not leftover, f"未替换的占位符：{sorted(set(leftover))}"
 # 红线：不允许出现网址/域名
 assert not re.search(r"https?://|www\.|codedeck\.top|[A-Za-z0-9-]\.(?:com|cn|net|io)\b", html), "页面里出现了网址或域名"
+
+# 红线：抖音合规可见文本与字幕校验（剥离 <style> 和标签属性后检查可见文字）
+_no_style = re.sub(r"<style>.*?</style>", "", html, flags=re.S)
+_visible_dom = re.sub(r"<[^>]+>", " ", _no_style.split("<script>")[0])
+_script_part = _no_style.split("<script>", 1)[1] if "<script>" in _no_style else ""
+_js_strings = " ".join(re.findall(r"[\'\"]([^\'\"]*)[\'\"]", _script_part))
+_check_blob = _visible_dom + " " + tl_js + " " + _js_strings
+for _bad in ["机场", "梯子", "本地挂代理", "共享代理", "代理节点", "代理朋友", "下载桌面端", "五地节点"]:
+    assert _bad not in _check_blob, f"出现未净化的敏感词：{_bad}"
+assert not re.search(r"claude", _visible_dom + " " + tl_js, re.I), "可见 DOM 或字幕中仍存在英文 Claude"
 
 out_file = ROOT / ("index_vertical.html" if VERTICAL else "index.html")
 out_file.write_text(html, encoding="utf-8")
