@@ -2,7 +2,7 @@
 
 这是一个**「用代码做视频」**的自媒体工程：画面不是剪辑软件做出来的，而是 HTML/CSS/Canvas + JS 时间函数，由无头浏览器逐帧截图、FFmpeg 合成；配音由云端 TTS API 生成；配乐和音效由 numpy 从零合成。
 
-当前已有成片：**EP01《如何在国内稳定使用 Claude》**（CodeDeck 产品向，91.78s，1920×1080）。
+当前已有成片：**EP01《如何在国内稳定使用 Claude》**（CodeDeck 产品向，91.78s，1920×1080；画面 v2 已按官网设计语言重做）。
 
 > 本文写给「接手的人或 AI」。所有命令都可以直接复制执行。若你在另一台电脑上，请先看 §2 的路径替换说明。
 
@@ -193,13 +193,15 @@ const SCN = TL.scenes, SUBS = TL.subs, DURATION = TL.total;
 
 动效基元只有两个：欠阻尼弹簧 `spring(x, w, z)` 与 `smoothstep(a, b, t)`。
 
-### 5.3 版式要点（EP01）
+### 5.3 版式要点（EP01 · v2 官网设计语言版）
 
-- 单文件、离线、零外网依赖；两张真实素材以 Base64 内嵌（`build_html.py` 读 `source/asset_*.jpg`）
-- 中文排版用 DOM，小摩托/地图用 Canvas 2D（`s1-canvas` 3552×1230、`s2-map-canvas` 1800×840）
-- 配色：纸 `#F5F1E8` / 墨 `#18181B` / 暖灰卡 `#EBE4D5` / Claude 橙 `#D97757` / CodeDeck 绿 `#10B981`·`#047857`
-- 顶栏：EP 胶囊 + 当前章节 + 6 段进度条 + 时间码；底部：黑底胶囊字幕
-- **全片不得出现任何网址/域名**，只出现产品名「CodeDeck」
+- **视觉语言对齐 CodeDeck 官网**：浅色纸面 + 淡网格、`1px #e7e7e3` 细分隔线、官网同款叠层柔和阴影（`--shadow-card` / `--shadow-float`）、24–30px 大圆角卡片、紧字距无衬线大标题（`letter-spacing:-.035em`）、带绿点的 eyebrow 胶囊、官网同款线性图标（`<symbol id="i-*">`）。不再使用旧版的硬边偏移阴影与粗黑描边。
+- 设计变量照搬官网：墨 `#18181b` / 次墨 `#3f3f46` / 弱字 `#6a6a73` / 分隔线 `#e7e7e3` / 纸 `#f4f4f0` / CodeDeck 绿 `#10b981`·`#047857` / Claude 橙 `#d97757`；Logo 用内联 SVG 重绘（蓝色渐变底 + 叠卡 + `>_`）。
+- 字体栈：`-apple-system, "SF Pro Text", "Inter", "PingFang SC", "Noto Sans CJK SC"`；等宽 `"SF Mono", "JetBrains Mono"`。macOS 渲染走 SF + 苹方，Linux 走 Inter + 思源黑体（`apt install fonts-inter fonts-noto-cjk fonts-noto-color-emoji fonts-jetbrains-mono`）。
+- 第 5/6 镜按官网示意图用 DOM 重建（不是截图）：痛点卡 → Hero → Mac mini 对比 → 连接路线 → 五地区点阵地球（陆地点阵数据取自官网，存于 `source/globe_land.b64`）→ 启动器一键连接 → 审批弹窗 → 全天候时间线 + 手机推送 → 安全四支柱 → 桌面端 + 手机主视觉 → 深色 CTA 定版。
+- 单文件、离线、零外网依赖；两张真实素材以 Base64 内嵌（`build_html.py` 读 `source/asset_indo_hd.jpg`、`source/asset_moments_hd.jpg`，由原图 `indonesia-kyc.jpg` / `agent-moments.png` 缩放而来）。
+- 顶栏：Logo + 期号 + 当前章节胶囊 + 6 段进度条 + 时间码；底部：深色圆角字幕，价格/数字标黄、CodeDeck 标绿。
+- **全片不得出现任何网址/域名**，只出现产品名「CodeDeck」——`build_html.py` 生成时会自动断言，命中即报错退出。
 
 ### 5.4 场景与定版卡
 
@@ -297,7 +299,7 @@ numpy 合成 120BPM 配乐（ducking）+ 音效（锚在 marks）─────
 当前 `视频制作/claude-codedeck-ep01/out/final.mp4`：
 
 ```
-91.767s · 1920×1080 · 30fps · H.264 + AAC 192k · 11.5 MB · 2753 帧
+91.767s · 1920×1080 · 30fps · H.264 + AAC 192k · 17.0 MB · 2753 帧（v2 画面）
 -14.2 LUFS · 真峰值 -1.8 dBTP · 无削波（≥-0.1dBFS 采样 0 个）
 ```
 
@@ -329,7 +331,7 @@ $PY "$ROOT/.agents/skills/code-video-studio/scripts/audio_tools.py" \
 | 成片对位偏差 | ≤ 1 帧（33ms） |
 | 响度 / 真峰值 | −14 LUFS / ≤ −1.5 dBTP |
 | 无削波、无异常静音 | 波形图 + 采样统计 |
-| 全片无网址 | `grep -o "https\?://\|\.top\|\.com" index.html` 应为空 |
+| 全片无网址 | `grep -oE "https?://|www\.|codedeck\.top" index.html` 应为空（`build_html.py` 也会自动断言） |
 
 ---
 

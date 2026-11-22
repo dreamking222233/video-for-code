@@ -74,6 +74,8 @@ def main():
         cmd += ["-vf", f"{blur}setpts=N/({a.fps}*TB),format=yuv420p", "-r", str(a.fps), "-c:v", "libx264", "-crf", str(a.crf)]
         if a.audio:
             cmd += ["-c:a", "aac", "-b:a", "192k", "-shortest"]
+        # moov 索引放到文件开头：否则网页/远程预览、边下边播只能看到已加载的前几秒
+        cmd += ["-movflags", "+faststart"]
         cmd.append(a.out)
         ff = subprocess.Popen(cmd, stdin=subprocess.PIPE)
 

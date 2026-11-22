@@ -35,7 +35,7 @@
 
 ```
 /Volumes/文件/自媒体/视频制作/claude-codedeck-ep01/out/final.mp4
-91.78 s · 1920×1080 · 30fps · H.264 + AAC 192k · 11.5 MB
+91.78 s · 1920×1080 · 30fps · H.264 + AAC 192k · 17.0 MB（v2 画面）
 响度 −14.2 LUFS，真峰值 −1.8 dBFS，2753 帧
 ```
 
@@ -80,7 +80,7 @@ claude-codedeck-ep01/
 2. **渲染方式**：Playwright 逐帧调 `render(t)` 截图，FFmpeg 管道合成 MP4。工具在
    `/Volumes/文件/自媒体/.agents/skills/code-video-studio/scripts/render.py`。
 3. **Python 环境**：`/Volumes/environment/Python/anaconda3/bin/python3`（已含 numpy / scipy / playwright / edge-tts）。
-4. **技术栈**：中文排版用 DOM（Songti SC 标题 + PingFang SC 正文 + SF Mono 数字），手绘小摩托和地图用 Canvas 2D（12fps 笔触抖动），光标用内联 SVG。**零外网依赖**，两张真实素材以 Base64 内嵌。
+4. **技术栈**：中文排版用 DOM（SF / Inter + 苹方 / 思源黑体，数字用 SF Mono / JetBrains Mono），小摩托、印尼点阵地图、官网同款点阵地球用 Canvas 2D，图标和 Logo 用内联 SVG。**零外网依赖**，两张真实素材以 Base64 内嵌。
 5. **动画**：只用欠阻尼闭式弹簧 `spring(x, w, z)` 和 `smoothstep`。文字不要加 `will-change: transform`（会糊）。
 6. **时间轴驱动**：每镜的起止来自 `vo_timeline.json` 的 `scenes[i].start`，渲染函数里写 `lt = t - SCN[i].start`。改文案后不要手改秒数。
    ⚠️ 关键坑：镜间有 0.35s 静音，场景窗口必须延伸到「下一镜开始」，否则间隙里没有镜头命中会闪回第 1 镜（已修，别再引入）。
@@ -157,7 +157,7 @@ ffmpeg -y -i out/final.mp4 -i audio/mix_norm.wav \
 ## 七、设计规范
 
 - 配色：纸色 `#F5F1E8`、墨 `#18181B`、暖灰卡 `#EBE4D5`、Claude 橙 `#D97757`、CodeDeck 绿 `#10B981` / `#047857`、警示红 `#D9462F`
-- 风格：编辑部刊物感（Bento 卡片 + 硬边偏移阴影 `box-shadow: 12px 14px 0 #18181B`）+ 拍立得实拍证据
+- 风格（v2）：**对齐 CodeDeck 官网设计语言**——浅色纸面、细分隔线、柔和叠层阴影、大圆角卡片、紧字距无衬线大标题、带绿点的 eyebrow 胶囊、官网同款线性图标；介绍 CodeDeck 的画面一律参照官网示意图（应用窗口、手机、五地区地球、启动器、审批弹窗、全天候时间线、连接路线、CTA）用 DOM 重建。旧版硬边偏移阴影 / 粗黑描边已废弃。
 - 顶部固定：左侧 EP01 胶囊 + 当前章节，中间 6 段进度条，右侧 CodeDeck 标识 + 时间码
 - 底部：高对比黑底胶囊字幕，居中对齐，最多两行
 - 安全区：距底 22px 起放字幕，主内容区底部预留 118px，绝不让字幕压住账单价签
