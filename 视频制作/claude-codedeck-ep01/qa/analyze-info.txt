@@ -1,0 +1,5 @@
+file: out/final.mp4
+duration: 94.63s  size: 1920x1080  fps: 30.00  audio: yes
+contact sheet: qa/analyze-sheet.png (5x4, one cell every 4.73s)
+shot changes (6): 30.1, 30.43, 49.53, 62.13, 62.5, 76.57
+average shot length: 13.52s

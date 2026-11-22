@@ -1,0 +1,44 @@
+# 视频制作
+
+## 题材:如何在国内稳定使用Claude
+
+
+
+前段时间特别火的一件事就是 :Claude印尼区下乡收号！ 从巴厘岛出发，摩旅1500公里来到苏门答腊！ 下乡面对面打款订阅！面对面KYC！ 助力中国科研人员！助力国产大模型！
+
+Anthropic 算尽了 IP、设备指纹和 KYC，唯独没算到中国号商直接下乡收号！🤣 有人从巴厘岛出发，骑摩托1500公里跑到苏门答腊，面对面收 Claude 账号、现场完成 KYC，甚至还合影留念！ 白板上写着： “印尼老哥助力，中国科研·中国AI，China No.1！” 最抽象的是，当地大妈可能一辈子没写过代码，名下却有3个 Claude 账号，莫名其妙成了“中国科研基石”！😂 只能说，技术风控遇上物理下乡，这剧情实在太抽象了！🤯
+
+素材:
+
+![Image](https://pbs.twimg.com/media/HWmvWEfbYAArgF8?format=jpg&name=large)
+
+素材:https://www.xiaohongshu.com/explore/6afc5c57000000002a039706?xsec_token=ABTXjBOwSmSF996rYCcg6UZwOUpOIRIyikI8u5h4mI7JQ=&xsec_source=pc_search&source=web_search_result_notes
+
+
+
+我有一个代理,目前在做 海外Macmini物理机部署,单独租一台Macmini一个月要159美元,折合人民币要1060元,
+
+而开通max要360美元,ultra需要520美元一个月
+
+这个成本对于大部分普通人是笔不小的开支
+
+![image-20261121055608628](/Users/dream/Library/Application Support/typora-user-images/image-20261121055608628.png)
+
+
+
+
+
+为什么中国人一定非要使用claude?
+
+claude的优势是什么?
+
+如何在国内开通订阅claude并稳定使用呢?
+
+
+
+我自己做了一个平台https://www.codedeck.top/
+
+"海外服务器直连，Claude Code 开机即用"
+
+一台只给你用的海外服务器，Claude Code 就跑在上面。在自己电脑上打开桌面端或浏览器，一键连上就能写代码；Claude 的每一步操作由你批准，代码、会话和账号凭据都留在你自己的服务器上。
+

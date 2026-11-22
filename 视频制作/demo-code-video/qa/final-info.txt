@@ -1,0 +1,5 @@
+file: /Volumes/文件/自媒体/视频制作/demo-code-video/out/final.mp4
+duration: 10.00s  size: 1920x1080  fps: 30.00  audio: yes
+contact sheet: /Volumes/文件/自媒体/视频制作/demo-code-video/qa/final-sheet.png (5x4, one cell every 0.62s)
+shot changes (1): 7.8
+average shot length: 5.00s

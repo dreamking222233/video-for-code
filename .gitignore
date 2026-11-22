@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# 编辑器
+.idea/
+.vscode/
+*.swp
+
+# 临时/渲染中间产物
+*.pem
+.env
+.env.*
+node_modules/

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #0B0D10;
+    color: #F4F4F0;
+    font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #stage { position: relative; width: 1920px; height: 1080px; }
+  canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+  .hud-top {
+    position: absolute; top: 56px; left: 84px; right: 84px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    pointer-events: none;
+  }
+  .kicker {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 20px; color: #10B981; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .kicker::before {
+    content: ""; width: 10px; height: 10px; border-radius: 50%;
+    background: #10B981; box-shadow: 0 0 14px #10B981;
+  }
+  .hero-title {
+    font-size: 62px; font-weight: 900; line-height: 1.14;
+    letter-spacing: -0.02em;
+  }
+  .hero-title .gold { color: #F0C97A; }
+  .hero-title .emerald { color: #34D399; }
+
+  .node-badges {
+    display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
+    font-family: "SF Mono", "Menlo", monospace; font-size: 20px;
+  }
+  .nb {
+    background: rgba(24, 28, 36, 0.85);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 8px 18px; border-radius: 999px; color: #D4D4D8;
+  }
+  .nb.active {
+    background: rgba(16, 185, 129, 0.16);
+    border: 1.5px solid #10B981; color: #6EE7B7; font-weight: 700;
+  }
+
+  /* Morphing Capsule Workbench */
+  .morph-shell {
+    position: absolute; left: 540px; top: 300px; width: 1296px; height: 690px;
+    background: rgba(19, 23, 30, 0.92);
+    border: 1.5px solid rgba(218, 178, 108, 0.42);
+    border-radius: 28px;
+    box-shadow: 0 36px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(16,185,129,0.22) inset;
+    padding: 30px 36px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .ms-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.09);
+  }
+  .ms-tabs { display: flex; gap: 12px; align-items: center; }
+  .ms-tab {
+    padding: 8px 18px; border-radius: 10px;
+    font-size: 21px; font-weight: 600; color: #A1A1AA;
+  }
+  .ms-tab.on {
+    background: rgba(217, 119, 87, 0.18); color: #FDBA74;
+    border: 1px solid rgba(217, 119, 87, 0.45);
+  }
+  .ms-status {
+    font-family: "SF Mono", monospace; font-size: 20px; color: #34D399;
+    background: rgba(16,185,129,0.12); padding: 7px 16px; border-radius: 8px;
+    border: 1px solid rgba(16,185,129,0.35);
+  }
+
+  .timeline-track {
+    background: #0E1116; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px; padding: 22px 28px;
+  }
+  .tl-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 22px; margin-bottom: 14px;
+  }
+  .tl-bar-bg {
+    height: 14px; background: #1F242D; border-radius: 999px; overflow: hidden;
+    position: relative;
+  }
+  .tl-bar-fill {
+    height: 100%; width: 78%;
+    background: linear-gradient(90deg, #D97757, #10B981);
+    border-radius: 999px;
+  }
+
+  .split-panes {
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px;
+  }
+  .pane {
+    background: #0E1116; border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 18px; padding: 22px 26px;
+    font-family: "SF Mono", "Menlo", monospace; font-size: 21px; line-height: 1.65;
+  }
+  .pane-h {
+    font-family: "PingFang SC", sans-serif;
+    font-size: 22px; font-weight: 700; color: #F0C97A; margin-bottom: 10px;
+    display: flex; justify-content: space-between;
+  }
+  .approve-card {
+    background: linear-gradient(145deg, rgba(16,185,129,0.14), rgba(14,17,22,0.95));
+    border: 1.5px solid #10B981;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .btn-row { display: flex; gap: 12px; margin-top: 14px; }
+  .btn {
+    padding: 10px 20px; border-radius: 10px; font-family: "PingFang SC", sans-serif;
+    font-size: 20px; font-weight: 800;
+  }
+  .btn-allow { background: #10B981; color: #052E16; flex: 1; text-align: center; }
+  .btn-deny { background: rgba(255,255,255,0.08); color: #D4D4D8; }
+
+  .ms-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 22px; color: #A1A1AA;
+  }
+  .url-chip {
+    font-family: "SF Mono", monospace; color: #F0C97A; font-weight: 700;
+    font-size: 24px;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="globe" width="3840" height="2160"></canvas>
+
+  <div class="hud-top">
+    <div>
+      <div class="kicker">CODEDECK · DEDICATED OVERSEAS INSTANCE</div>
+      <div class="hero-title">合上电脑，<span class="gold">Claude</span> 照样通宵跑<br>一台只属于你的<span class="emerald">海外服务器</span></div>
+    </div>
+    <div class="node-badges">
+      <div class="nb active">🇸🇬 新加坡 · ~12ms · 独立公网 IP</div>
+      <div class="nb">🇰🇷 韩国 · ~28ms &nbsp;|&nbsp; 🇯🇵 日本 · ~35ms</div>
+      <div class="nb">🇲🇾 马来西亚 · ~22ms &nbsp;|&nbsp; 🇺🇸 美国 · ~120ms</div>
+    </div>
+  </div>
+
+  <div class="morph-shell" id="shell">
+    <div class="ms-top">
+      <div class="ms-tabs">
+        <div class="ms-tab on">● 对话 Opus</div>
+        <div class="ms-tab">终端 xterm</div>
+        <div class="ms-tab">文件 Diff</div>
+        <div class="ms-tab">Git Worktree</div>
+      </div>
+      <div class="ms-status">systemd 7×24 守护 · 断线自动补齐输出</div>
+    </div>
+
+    <div class="timeline-track">
+      <div class="tl-row">
+        <span style="color:#E4E4E7;font-weight:700;">🌙 23:30 你的笔记本已合盖离线</span>
+        <span style="color:#34D399;font-family:'SF Mono',monospace;font-weight:700;">05:00 42 个测试全部通过 · 已推送 PR</span>
+      </div>
+      <div class="tl-bar-bg"><div class="tl-bar-fill"></div></div>
+    </div>
+
+    <div class="split-panes">
+      <div class="pane">
+        <div class="pane-h">
+          <span>root@sg-01 · 远程隔离执行</span>
+          <span style="color:#9CA3AF;font-size:18px;">不碰本地工作机</span>
+        </div>
+        <div style="color:#D97757;">$ claude --resume "重构订单与支付模块"</div>
+        <div style="color:#A1A1AA;">● Read   db/schema.prisma (212 行)</div>
+        <div style="color:#34D399;">● Write  db/migrations/0042_refund.sql (+12)</div>
+        <div style="color:#E4E4E7;">● Bash   npx tsc --noEmit  →  0 errors</div>
+      </div>
+
+      <div class="pane approve-card">
+        <div>
+          <div class="pane-h" style="color:#6EE7B7;">
+            <span>⚡ 权限审批拦截</span>
+            <span style="font-size:18px;">默认模式</span>
+          </div>
+          <div style="color:#E4E4E7;font-family:'PingFang SC',sans-serif;font-size:22px;line-height:1.45;">
+            Claude 请求运行：<br>
+            <span style="font-family:'SF Mono',monospace;color:#F0C97A;">npm run db:migrate</span>
+          </div>
+        </div>
+        <div class="btn-row">
+          <div class="btn btn-deny">拒绝</div>
+          <div class="btn btn-allow">允许并记住 ✓</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ms-footer">
+      <span>代码、会话与 Claude 凭据 100% 留在你自己的服务器上</span>
+      <span class="url-chip">https://www.codedeck.top</span>
+    </div>
+  </div>
+</div>
+
+<script>
+window.ready = false;
+window.render = function(t) {
+  const c = document.getElementById('globe');
+  const ctx = c.getContext('2d');
+  ctx.save();
+  ctx.scale(2, 2);
+  ctx.clearRect(0, 0, 1920, 1080);
+
+  // Subtle precision grid
+  ctx.strokeStyle = 'rgba(218, 178, 108, 0.06)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < 1920; x += 80) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1080); ctx.stroke();
+  }
+  for (let y = 0; y < 1080; y += 80) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1920, y); ctx.stroke();
+  }
+
+  // 3D Wireframe Globe on bottom-left (cx=280, cy=655, R=255)
+  const cx = 275, cy = 655, R = 245;
+  const rot = t * 0.35 + 0.6;
+
+  // Radial glow behind globe
+  const grad = ctx.createRadialGradient(cx, cy, 30, cx, cy, R * 1.45);
+  grad.addColorStop(0, 'rgba(16, 185, 129, 0.18)');
+  grad.addColorStop(0.6, 'rgba(218, 178, 108, 0.07)');
+  grad.addColorStop(1, 'rgba(11, 13, 16, 0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(cx, cy, R * 1.45, 0, Math.PI * 2); ctx.fill();
+
+  // Outer sphere ring
+  ctx.strokeStyle = 'rgba(218, 178, 108, 0.5)';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+
+  // Latitude & Longitude 3D projection
+  function proj(lat, lon) {
+    const phi = lat * Math.PI / 180;
+    const lam = (lon * Math.PI / 180) + rot;
+    const x3 = Math.cos(phi) * Math.sin(lam);
+    const y3 = -Math.sin(phi);
+    const z3 = Math.cos(phi) * Math.cos(lam);
+    return { x: cx + x3 * R, y: cy + y3 * R, z: z3 };
+  }
+
+  ctx.lineWidth = 1.3;
+  for (let lat = -60; lat <= 60; lat += 30) {
+    ctx.beginPath();
+    let started = false;
+    for (let lon = -180; lon <= 180; lon += 6) {
+      const p = proj(lat, lon);
+      if (p.z > -0.15) {
+        ctx.strokeStyle = p.z > 0 ? 'rgba(218, 178, 108, 0.28)' : 'rgba(218, 178, 108, 0.08)';
+        if (!started) { ctx.moveTo(p.x, p.y); started = true; }
+        else ctx.lineTo(p.x, p.y);
+      } else { started = false; }
+    }
+    ctx.stroke();
+  }
+
+  for (let lon = -180; lon < 180; lon += 30) {
+    ctx.beginPath();
+    let started = false;
+    for (let lat = -85; lat <= 85; lat += 5) {
+      const p = proj(lat, lon);
+      if (p.z > 0) {
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.24)';
+        if (!started) { ctx.moveTo(p.x, p.y); started = true; }
+        else ctx.lineTo(p.x, p.y);
+      } else { started = false; }
+    }
+    ctx.stroke();
+  }
+
+  // Highlight nodes (SG, JP, KR, MY) connecting beam into the workbench
+  const nodes = [
+    { name: 'SG 12ms', lat: 5, lon: -18, main: true },
+    { name: 'MY 22ms', lat: 12, lon: -24, main: false },
+    { name: 'KR 28ms', lat: 36, lon: 6, main: false },
+    { name: 'JP 35ms', lat: 35, lon: 18, main: false }
+  ];
+
+  nodes.forEach(n => {
+    const p = proj(n.lat, n.lon);
+    if (p.z > 0) {
+      // Arc beam from node to shell left edge (540, 520)
+      ctx.save();
+      ctx.strokeStyle = n.main ? '#10B981' : 'rgba(240, 201, 122, 0.45)';
+      ctx.lineWidth = n.main ? 3.5 : 1.8;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.quadraticCurveTo((p.x + 540)/2, p.y - 70, 540, n.main ? 490 : 560);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = n.main ? '#10B981' : '#F0C97A';
+      ctx.beginPath(); ctx.arc(p.x, p.y, n.main ? 8 : 5.5, 0, Math.PI * 2); ctx.fill();
+      if (n.main) {
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 18, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.fillStyle = '#F4F4F0';
+      ctx.font = '700 18px "SF Mono", monospace';
+      ctx.fillText(n.name, p.x - 36, p.y - 16);
+    }
+  });
+
+  ctx.restore();
+};
+document.fonts.ready.then(() => { window.render(1.0); window.ready = true; });
+</script>
+</body>
+</html>

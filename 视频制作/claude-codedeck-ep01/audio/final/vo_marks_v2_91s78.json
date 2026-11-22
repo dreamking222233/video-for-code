@@ -1,0 +1,42 @@
+{
+  "total": 91.78,
+  "gap": 0.22,
+  "marks": [
+    {
+      "id": "s1_hook",
+      "start": 0.0,
+      "end": 12.28,
+      "dur": 12.28
+    },
+    {
+      "id": "s2_indo",
+      "start": 12.5,
+      "end": 28.27,
+      "dur": 15.77
+    },
+    {
+      "id": "s3_cost",
+      "start": 28.49,
+      "end": 46.01,
+      "dur": 17.52
+    },
+    {
+      "id": "s4_why",
+      "start": 46.23,
+      "end": 58.25,
+      "dur": 12.02
+    },
+    {
+      "id": "s5_codedeck",
+      "start": 58.47,
+      "end": 71.34,
+      "dur": 12.87
+    },
+    {
+      "id": "s6_features",
+      "start": 71.56,
+      "end": 88.07,
+      "dur": 16.51
+    }
+  ]
+}

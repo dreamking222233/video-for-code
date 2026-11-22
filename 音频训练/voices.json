@@ -1,0 +1,74 @@
+{
+  "qwen_plus": {
+    "model": "qwen-audio-3.1-tts-plus",
+    "voice_id": "qwen-audio-3.1-tts-plus-dshqwen-3447f83037734fa4904f09cb3faee0ea",
+    "prefix": "dshqwen",
+    "sample_rate": 24000,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_bailian_17s.wav",
+    "price": 1.4
+  },
+  "cosy_plus": {
+    "model": "cosyvoice-v3.5-plus",
+    "voice_id": "cosyvoice-v3.5-plus-dshcp-6445764ec8064307b499165ae10b7fb0",
+    "prefix": "dshcp",
+    "sample_rate": 24000,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_bailian_17s.wav",
+    "price": 1.5,
+    "note": "voice_id 于 07:00 用 ref_bailian_17s.wav 建立"
+  },
+  "cosy_flash": {
+    "model": "cosyvoice-v3.5-flash",
+    "voice_id": "cosyvoice-v3.5-flash-dshvoice-bd4d6c58c2ca4dee97491e938400ba2e",
+    "prefix": "dshvoice",
+    "sample_rate": 24000,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_bailian_17s.wav",
+    "price": 0.8
+  },
+  "cosy_v2": {
+    "model": "cosyvoice-v3.5-plus",
+    "voice_id": "cosyvoice-v3.5-plus-dshv2-de51050804324850ad05118b2b3cde4d",
+    "prefix": "dshv2",
+    "sample_rate": 24000,
+    "price": 1.5,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_v2_bailian_17s.wav",
+    "created": "2026-11-21 10:28"
+  },
+  "cosy_v1_legacy": {
+    "model": "cosyvoice-v3.5-plus",
+    "voice_id": "cosyvoice-v3.5-plus-dshcp-e71a2c12219a4d389b6c1abcb8f71837",
+    "prefix": "dshcp",
+    "sample_rate": 24000,
+    "price": 1.5,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_bailian_17s.wav",
+    "created": "2026-11-21 07:01",
+    "note": "旧参考(SNR21dB)训练；vo_clone_* 系列音频由它生成，保留以便复现"
+  },
+  "_default": "cosy_v2",
+  "cosy_v2_24": {
+    "model": "cosyvoice-v3.5-plus",
+    "voice_id": "cosyvoice-v3.5-plus-dshv24-fbaf5e5f3f8044cfbce657fb13464e41",
+    "prefix": "dshv24",
+    "sample_rate": 24000,
+    "price": 1.5,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_v2_volc_24s.wav",
+    "created": "2026-11-21 10:34"
+  },
+  "qwen_v2": {
+    "model": "qwen-audio-3.1-tts-plus",
+    "voice_id": "qwen-audio-3.1-tts-plus-dshqv2-82c924cbf5cc4aafae8d46986e7956a2",
+    "prefix": "dshqv2",
+    "sample_rate": 24000,
+    "price": 1.5,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_v2_bailian_17s.wav",
+    "created": "2026-11-21 10:38"
+  },
+  "qwen_v2_24": {
+    "model": "qwen-audio-3.1-tts-plus",
+    "voice_id": "qwen-audio-3.1-tts-plus-dshqv24-d8be9edf745547a3863a47252725836e",
+    "prefix": "dshqv24",
+    "sample_rate": 24000,
+    "price": 1.5,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_v2_volc_24s.wav",
+    "created": "2026-11-21 10:38"
+  }
+}

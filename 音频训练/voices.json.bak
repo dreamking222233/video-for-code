@@ -1,0 +1,26 @@
+{
+  "qwen_plus": {
+    "model": "qwen-audio-3.1-tts-plus",
+    "voice_id": "qwen-audio-3.1-tts-plus-dshqwen-3447f83037734fa4904f09cb3faee0ea",
+    "prefix": "dshqwen",
+    "sample_rate": 24000,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_bailian_17s.wav",
+    "price": 1.4
+  },
+  "cosy_plus": {
+    "model": "cosyvoice-v3.5-plus",
+    "voice_id": "cosyvoice-v3.5-plus-dshcp-e71a2c12219a4d389b6c1abcb8f71837",
+    "prefix": "dshcp",
+    "sample_rate": 24000,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_bailian_17s.wav",
+    "price": 1.5
+  },
+  "cosy_flash": {
+    "model": "cosyvoice-v3.5-flash",
+    "voice_id": "cosyvoice-v3.5-flash-dshvoice-bd4d6c58c2ca4dee97491e938400ba2e",
+    "prefix": "dshvoice",
+    "sample_rate": 24000,
+    "ref": "/Volumes/文件/自媒体/音频训练/processed/ref_bailian_17s.wav",
+    "price": 0.8
+  }
+}

@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080, initial-scale=1.0" />
+<title>CODE TO FILM · 代码视频工作流</title>
+<style>
+  :root {
+    --bg: #F5F1E8;
+    --card: #EBE4D5;
+    --card-light: #FCF9F2;
+    --ink: #141413;
+    --ink-muted: #5E594F;
+    --red: #D9462F;
+    --green: #1F6E4A;
+    --dark-panel: #191918;
+    --dark-border: #2F2E2B;
+    --serif: "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
+    --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    --mono: "SF Mono", "Menlo", "Monaco", Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #stage {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* 极淡工程点阵网格 + 纸感微粒背景 */
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(rgba(20, 20, 19, 0.10) 1.5px, transparent 1.5px);
+    background-size: 48px 48px;
+    background-position: 24px 24px;
+    pointer-events: none;
+  }
+
+  .bg-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 45%, transparent 55%, rgba(212, 202, 182, 0.45) 100%);
+    pointer-events: none;
+  }
+
+  /* 顶部刊物眉标 */
+  .topbar {
+    position: absolute;
+    top: 44px;
+    left: 84px;
+    right: 84px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1.5px solid rgba(20, 20, 19, 0.14);
+    padding-bottom: 14px;
+    z-index: 40;
+  }
+
+  .chapter-tag {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .chapter-tag .slash {
+    color: var(--red);
+  }
+
+  .progress-rail {
+    position: relative;
+    width: 560px;
+    height: 6px;
+    background: rgba(20, 20, 19, 0.12);
+    border-radius: 999px;
+    overflow: visible;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--red);
+    border-radius: 999px;
+    width: 0%;
+  }
+
+  .progress-dot {
+    position: absolute;
+    top: -3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2.5px solid rgba(20, 20, 19, 0.35);
+    transform: translateX(-50%);
+  }
+
+  .progress-dot.active {
+    border-color: var(--red);
+    background: var(--red);
+  }
+
+  .timecode {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+  }
+
+  /* 场景容器（完全独立防重叠） */
+  .scene {
+    position: absolute;
+    top: 112px;
+    left: 84px;
+    right: 84px;
+    bottom: 64px;
+    display: none;
+  }
+
+  /* ================= 镜头 1：代码 + 大字 + 手绘轨迹 ================= */
+  .s1-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 72px;
+  }
+
+  .code-window {
+    width: 820px;
+    background: var(--dark-panel);
+    border-radius: 24px;
+    padding: 36px 40px;
+    color: #F4EFE6;
+    box-shadow: 0 28px 60px rgba(20, 20, 19, 0.16);
+    border: 2px solid var(--dark-border);
+    position: relative;
+  }
+
+  .win-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  }
+
+  .win-dots {
+    display: flex;
+    gap: 10px;
+  }
+
+  .win-dots span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #3A3936;
+  }
+  .win-dots span:first-child { background: var(--red); }
+  .win-dots span:nth-child(2) { background: #E3A03B; }
+  .win-dots span:nth-child(3) { background: var(--green); }
+
+  .win-file {
+    font-family: var(--mono);
+    font-size: 19px;
+    color: #A8A295;
+  }
+
+  .code-lines {
+    font-family: var(--mono);
+    font-size: 25px;
+    line-height: 1.72;
+  }
+
+  .code-line {
+    padding: 5px 14px;
+    border-radius: 10px;
+    display: flex;
+    gap: 20px;
+    border-left: 4px solid transparent;
+  }
+
+  .code-line.hl {
+    background: rgba(217, 70, 47, 0.16);
+    border-left-color: var(--red);
+  }
+
+  .ln { color: #6E6A61; user-select: none; width: 28px; }
+  .kw { color: #F08A75; }
+  .fn { color: #8DD4AE; }
+  .str { color: #EED08B; }
+  .cm { color: #7C776D; }
+
+  .code-meter {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 19px;
+    color: #C7C0B3;
+  }
+
+  .meter-bar-bg {
+    width: 340px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .meter-bar-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 999px;
+  }
+
+  .s1-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-start;
+    padding: 10px 20px;
+    background: var(--card);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+
+  .pill-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .hero-mask {
+    overflow: hidden;
+    padding: 4px 0;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: 104px;
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .hero-title .accent {
+    color: var(--red);
+  }
+
+  .hero-sub {
+    margin-top: 22px;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    line-height: 1.45;
+  }
+
+  .sketch-box {
+    margin-top: 34px;
+    background: var(--card-light);
+    border: 2px solid var(--ink);
+    border-radius: 18px;
+    padding: 20px 24px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .sketch-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  /* ================= 镜头 2：Bento 四大引擎 + 弹簧光标 ================= */
+  .s2-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transform-origin: center center;
+  }
+
+  .s2-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .s2-title {
+    font-family: var(--serif);
+    font-size: 58px;
+    font-weight: 900;
+    color: var(--ink);
+  }
+
+  .s2-sub {
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--ink-muted);
+  }
+
+  .bento-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .bento-card {
+    background: var(--card-light);
+    border: 2.5px solid rgba(20, 20, 19, 0.22);
+    border-radius: 22px;
+    padding: 26px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    box-shadow: 0 10px 26px rgba(20, 20, 19, 0.05);
+  }
+
+  .bento-card.active {
+    border-color: var(--red);
+    border-width: 3px;
+    box-shadow: 8px 8px 0 var(--red);
+    background: #FFFFFF;
+  }
+
+  .bento-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bento-name {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  .bento-num {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--red);
+    background: rgba(217, 70, 47, 0.10);
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+
+  .bento-demo {
+    height: 170px;
+    background: var(--bg);
+    border-radius: 14px;
+    border: 1.5px solid rgba(20, 20, 19, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bento-desc {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  .liquid-tabs {
+    position: relative;
+    display: flex;
+    background: var(--card);
+    border-radius: 16px;
+    border: 2px solid var(--ink);
+    width: 560px;
+    height: 76px;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .liquid-pill {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    background: var(--ink);
+    border-radius: 10px;
+    z-index: 1;
+  }
+
+  .liquid-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+  }
+
+  .liquid-layer.dark {
+    z-index: 2;
+    color: var(--ink);
+  }
+
+  .liquid-layer.light {
+    z-index: 3;
+    color: #FFFFFF;
+  }
+
+  .liquid-label {
+    flex: 1;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  /* 矢量光标 */
+  .cursor-el {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    z-index: 50;
+    pointer-events: none;
+    transform-origin: 4px 4px;
+  }
+
+  .cursor-ring {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--red);
+    z-index: 45;
+    pointer-events: none;
+  }
+
+  /* ================= 镜头 3：四步工程管线 + 胶片轨 ================= */
+  .s3-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .s3-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .s3-title {
+    font-family: var(--serif);
+    font-size: 64px;
+    font-weight: 900;
+  }
+
+  .s3-sub {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  .pipe-stage {
+    position: relative;
+    height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+  }
+
+  .pipe-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .pipe-card {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    height: 360px;
+    background: var(--card-light);
+    border: 2.5px solid var(--ink);
+    border-radius: 20px;
+    padding: 36px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 8px 10px 0 rgba(20, 20, 19, 0.14);
+  }
+
+  .tape {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: 112px;
+    height: 28px;
+    background: rgba(226, 207, 162, 0.85);
+    border: 1px solid rgba(20, 20, 19, 0.15);
+  }
+
+  .pipe-step {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--red);
+  }
+
+  .pipe-name {
+    font-family: var(--serif);
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-top: 10px;
+  }
+
+  .pipe-code {
+    font-family: var(--mono);
+    font-size: 21px;
+    font-weight: 600;
+    background: var(--card);
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: var(--ink);
+    border: 1.5px solid rgba(20, 20, 19, 0.15);
+  }
+
+  .pipe-note {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+
+  /* 胶片帧轨 */
+  .filmstrip {
+    height: 156px;
+    background: var(--dark-panel);
+    border-radius: 18px;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+  }
+
+  .film-holes {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .film-holes span {
+    width: 24px;
+    height: 11px;
+    border-radius: 3px;
+    background: #3A3834;
+  }
+
+  .film-frames {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .film-cell {
+    flex: 0 0 180px;
+    height: 76px;
+    border-radius: 8px;
+    background: #272623;
+    border: 1.5px solid #48453E;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    color: #D7D0C3;
+    font-family: var(--mono);
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  .film-cell.now {
+    border-color: var(--red);
+    background: rgba(217, 70, 47, 0.22);
+    color: #FFFFFF;
+  }
+
+  .qa-stamp {
+    position: absolute;
+    right: 36px;
+    bottom: 184px;
+    background: var(--green);
+    color: #FFFFFF;
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 800;
+    padding: 16px 30px;
+    border-radius: 14px;
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    z-index: 20;
+  }
+
+  /* ================= 镜头 4：取景器定版 ================= */
+  .s4-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 42px;
+  }
+
+  .viewfinder {
+    position: relative;
+    width: 1360px;
+    height: 620px;
+    background: var(--dark-panel);
+    border-radius: 28px;
+    border: 3px solid var(--ink);
+    box-shadow: 16px 16px 0 var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    color: #F6F1E7;
+  }
+
+  .vf-corner {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-color: rgba(246, 241, 231, 0.55);
+    border-style: solid;
+  }
+  .vf-tl { top: 28px; left: 28px; border-width: 4px 0 0 4px; }
+  .vf-tr { top: 28px; right: 28px; border-width: 4px 4px 0 0; }
+  .vf-bl { bottom: 28px; left: 28px; border-width: 0 0 4px 4px; }
+  .vf-br { bottom: 28px; right: 28px; border-width: 0 4px 4px 0; }
+
+  .vf-rec {
+    position: absolute;
+    top: 34px;
+    left: 94px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: #CFC8BA;
+  }
+
+  .rec-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .vf-main-row {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+  }
+
+  .vf-title {
+    font-family: var(--serif);
+    font-size: 118px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: #F6F1E7;
+    line-height: 1.05;
+  }
+
+  .vf-seal {
+    width: 94px;
+    height: 94px;
+    background: var(--red);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 900;
+    color: #FFF;
+    line-height: 1.1;
+    text-align: center;
+    border: 3px solid #F6F1E7;
+    transform: rotate(-6deg);
+  }
+
+  .vf-sub {
+    margin-top: 28px;
+    font-size: 48px;
+    font-weight: 700;
+    color: #D7D0C3;
+    letter-spacing: 0.04em;
+  }
+
+  .vf-sub .green {
+    color: #7BE0AF;
+  }
+
+  .aspect-row {
+    display: flex;
+    gap: 28px;
+  }
+
+  .aspect-pill {
+    padding: 18px 34px;
+    border-radius: 999px;
+    border: 2.5px solid var(--ink);
+    background: var(--card-light);
+    font-family: var(--mono);
+    font-size: 25px;
+    font-weight: 800;
+    color: var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
+  .aspect-pill.lit {
+    background: var(--red);
+    color: #FFFFFF;
+    border-color: var(--ink);
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="bg-grid"></div>
+  <div class="bg-vignette"></div>
+
+  <!-- 顶部全局刊物眉标 -->
+  <header class="topbar">
+    <div class="chapter-tag">
+      <span class="slash">//</span>
+      <span id="chapter-text">01 · 原理</span>
+    </div>
+    <div class="progress-rail">
+      <div class="progress-fill" id="progress-fill"></div>
+      <div class="progress-dot" style="left: 0%"></div>
+      <div class="progress-dot" style="left: 25%"></div>
+      <div class="progress-dot" style="left: 52%"></div>
+      <div class="progress-dot" style="left: 78%"></div>
+    </div>
+    <div class="timecode" id="timecode">CODE STUDIO · 00:00:00:00</div>
+  </header>
+
+  <!-- ==================== 镜头 1 ==================== -->
+  <section class="scene" id="scene-1">
+    <div class="s1-layout">
+      <div class="code-window" id="s1-code">
+        <div class="win-head">
+          <div class="win-dots"><span></span><span></span><span></span></div>
+          <div class="win-file">index.html · window.render(t)</div>
+        </div>
+        <div class="code-lines">
+          <div class="code-line" id="cl-1"><span class="ln">01</span><span><span class="cm">// 100% 由时间 t 驱动，拒绝抽卡</span></span></div>
+          <div class="code-line" id="cl-2"><span class="ln">02</span><span><span class="kw">window</span>.<span class="fn">render</span> = (t) =&gt; {</span></div>
+          <div class="code-line" id="cl-3"><span class="ln">03</span><span>&nbsp;&nbsp;<span class="kw">const</span> beat = Math.<span class="fn">floor</span>(t * 2);</span></div>
+          <div class="code-line" id="cl-4"><span class="ln">04</span><span>&nbsp;&nbsp;<span class="kw">const</span> ease = <span class="fn">spring</span>(t - 0.5, 14);</span></div>
+          <div class="code-line" id="cl-5"><span class="ln">05</span><span>&nbsp;&nbsp;<span class="fn">drawFrame</span>(t, beat, ease);</span></div>
+          <div class="code-line" id="cl-6"><span class="ln">06</span><span>}; <span class="cm">// Playwright -&gt; FFmpeg.mux()</span></span></div>
+        </div>
+        <div class="code-meter">
+          <span id="s1-t-val">t = 0.00s · spring = 0.000</span>
+          <div class="meter-bar-bg"><div class="meter-bar-fill" id="s1-meter"></div></div>
+        </div>
+      </div>
+
+      <div class="s1-right" id="s1-right">
+        <div class="pill-badge">
+          <span class="pill-dot"></span>
+          <span>CODE-DRIVEN VIDEO STUDIO</span>
+        </div>
+        <div class="hero-mask">
+          <h1 class="hero-title" id="s1-title">
+            一行代码<br /><span class="accent">渲染电影</span>
+          </h1>
+        </div>
+        <p class="hero-sub" id="s1-sub">
+          以网页代码为摄影棚，Playwright 逐帧拍片，<br />FFmpeg 精准合成有声成片
+        </p>
+        <div class="sketch-box">
+          <div class="sketch-label">
+            <span>SPRING CURVE · 120 BPM BEAT GRID</span>
+            <span id="s1-beat-lbl">BEAT 01</span>
+          </div>
+          <svg id="s1-svg" width="760" height="146" viewBox="0 0 760 146">
+            <line x1="16" y1="112" x2="744" y2="112" stroke="#C8C0B0" stroke-width="2" stroke-dasharray="6 6"/>
+            <path id="s1-curve" d="" fill="none" stroke="#141413" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="s1-beat-dots"></g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 镜头 2 ==================== -->
+  <section class="scene" id="scene-2">
+    <div class="s2-wrap" id="s2-wrap">
+      <div class="s2-header">
+        <h2 class="s2-title">四大代码引擎 · 全场景覆盖</h2>
+        <div class="s2-sub">CANVAS 2D · SVG SPRING · 3D SHADER · NUMPY AUDIO</div>
+      </div>
+
+      <div class="bento-grid">
+        <!-- 卡片 1: Canvas 2D 像素 -->
+        <div class="bento-card" id="bcard-0">
+          <div class="bento-top">
+            <div class="bento-name">Canvas 2D · 像素与插画</div>
+            <div class="bento-num">01 · 10fps POSE</div>
+          </div>
+          <div class="bento-demo">
+            <canvas id="c-pixel" width="560" height="150" style="width: 560px; height: 150px;"></canvas>
+          </div>
+          <div class="bento-desc">关闭抗锯齿整数倍放大，姿态 10fps 量化 + 粒子 30fps</div>
+        </div>
+
+        <!-- 卡片 2: SVG 闭式弹簧 -->
+        <div class="bento-card" id="bcard-1">
+          <div class="bento-top">
+            <div class="bento-name">HTML / SVG · 闭式弹簧</div>
+            <div class="bento-num">02 · DUAL SPRING</div>
+          </div>
+          <div class="bento-demo">
+            <div class="liquid-tabs">
+              <div class="liquid-pill" id="liquid-pill"></div>
+              <div class="liquid-layer dark">
+                <div class="liquid-label">MOTION</div>
+                <div class="liquid-label">SPRING</div>
+                <div class="liquid-label">MORPH</div>
+              </div>
+              <div class="liquid-layer light" id="liquid-light">
+                <div class="liquid-label">MOTION</div>
+                <div class="liquid-label">SPRING</div>
+                <div class="liquid-label">MORPH</div>
+              </div>
+            </div>
+          </div>
+          <div class="bento-desc">前沿与后沿绑定不同刚度弹簧，拉伸形变无帧间状态</div>
+        </div>
+
+        <!-- 卡片 3: 3D 线框 + 扫描线 -->
+        <div class="bento-card" id="bcard-2">
+          <div class="bento-top">
+            <div class="bento-name">Three.js / Shader · 空间质感</div>
+            <div class="bento-num">03 · 3D + CRT</div>
+          </div>
+          <div class="bento-demo" style="background: #141413;">
+            <canvas id="c-3d" width="1120" height="300" style="width: 560px; height: 150px;"></canvas>
+          </div>
+          <div class="bento-desc">实时 3D 透视旋转几何体叠加 CRT 扫描线与光晕质感</div>
+        </div>
+
+        <!-- 卡片 4: 代码配乐频谱 -->
+        <div class="bento-card" id="bcard-3">
+          <div class="bento-top">
+            <div class="bento-name">Python / numpy · 代码配乐</div>
+            <div class="bento-num">04 · -14 LUFS</div>
+          </div>
+          <div class="bento-demo">
+            <canvas id="c-audio" width="1120" height="300" style="width: 560px; height: 150px;"></canvas>
+          </div>
+          <div class="bento-desc">底鼓、和弦、动作音效与画面拍点同源对齐合成</div>
+        </div>
+      </div>
+
+      <div class="cursor-ring" id="cursor-ring"></div>
+      <svg class="cursor-el" id="cursor-el" viewBox="0 0 32 32">
+        <path d="M5 3 L26 14 L16 17 L12 27 Z" fill="#FFFFFF" stroke="#141413" stroke-width="2.6" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ==================== 镜头 3 ==================== -->
+  <section class="scene" id="scene-3">
+    <div class="s3-wrap" id="s3-wrap">
+      <div class="s3-head">
+        <h2 class="s3-title">四步工程化出片管线</h2>
+        <div class="s3-sub">确定性分镜 · 静帧自检 · 音画同步</div>
+      </div>
+
+      <div class="pipe-stage">
+        <svg class="pipe-svg" viewBox="0 0 1752 450">
+          <defs>
+            <clipPath id="pipe-clip">
+              <rect id="pipe-clip-rect" x="0" y="0" width="0" height="450" />
+            </clipPath>
+          </defs>
+          <g clip-path="url(#pipe-clip)">
+            <path d="M 220 225 L 1532 225" fill="none" stroke="#D9462F" stroke-width="5" stroke-dasharray="10 8" stroke-linecap="round"/>
+            <polygon points="434,216 450,225 434,234" fill="#D9462F" />
+            <polygon points="878,216 894,225 878,234" fill="#D9462F" />
+            <polygon points="1322,216 1338,225 1322,234" fill="#D9462F" />
+          </g>
+        </svg>
+
+        <div class="pipe-card" id="pcard-0">
+          <div class="tape"></div>
+          <div>
+            <div class="pipe-step">STEP 01</div>
+            <div class="pipe-name">剧本与节拍</div>
+          </div>
+          <div class="pipe-code">brief.md + BPM</div>
+          <div class="pipe-note">三方案预演后固化分镜</div>
+        </div>
+
+        <div class="pipe-card" id="pcard-1">
+          <div class="tape" style="transform: translateX(-50%) rotate(2.2deg);"></div>
+          <div>
+            <div class="pipe-step">STEP 02</div>
+            <div class="pipe-name">时间函数代码</div>
+          </div>
+          <div class="pipe-code">window.render(t)</div>
+          <div class="pipe-note">零状态纯时间确定性绘制</div>
+        </div>
+
+        <div class="pipe-card" id="pcard-2">
+          <div class="tape" style="transform: translateX(-50%) rotate(-1.5deg);"></div>
+          <div>
+            <div class="pipe-step">STEP 03</div>
+            <div class="pipe-name">无头逐帧渲染</div>
+          </div>
+          <div class="pipe-code">Playwright × 300f</div>
+          <div class="pipe-note">静帧先验排版再全片输出</div>
+        </div>
+
+        <div class="pipe-card" id="pcard-3">
+          <div class="tape" style="transform: translateX(-50%) rotate(1.8deg);"></div>
+          <div>
+            <div class="pipe-step">STEP 04</div>
+            <div class="pipe-name">混音与验收</div>
+          </div>
+          <div class="pipe-code">FFmpeg · 1080p</div>
+          <div class="pipe-note">手机 360px 缩略+波形核查</div>
+        </div>
+      </div>
+
+      <div class="qa-stamp" id="qa-stamp">✓ 1080p · 30fps · -14 LUFS</div>
+
+      <div class="filmstrip">
+        <div class="film-holes" id="holes-top"></div>
+        <div class="film-frames" id="film-frames"></div>
+        <div class="film-holes" id="holes-bot"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 镜头 4 ==================== -->
+  <section class="scene" id="scene-4">
+    <div class="s4-wrap" id="s4-wrap">
+      <div class="viewfinder" id="viewfinder">
+        <div class="vf-corner vf-tl"></div>
+        <div class="vf-corner vf-tr"></div>
+        <div class="vf-corner vf-bl"></div>
+        <div class="vf-corner vf-br"></div>
+
+        <div class="vf-rec">
+          <span class="rec-dot" id="rec-dot"></span>
+          <span>FINAL RENDER READY · 120 BPM</span>
+        </div>
+
+        <div class="vf-main-row" id="vf-main">
+          <div class="vf-title">CODE TO FILM</div>
+          <div class="vf-seal">成片<br />就绪</div>
+        </div>
+
+        <div class="vf-sub" id="vf-sub">
+          代码视频工作流 · <span class="green">随时开拍</span>
+        </div>
+      </div>
+
+      <div class="aspect-row">
+        <div class="aspect-pill" id="asp-0">16:9 横屏 · 1920×1080</div>
+        <div class="aspect-pill" id="asp-1">9:16 抖音 · 1080×1920</div>
+        <div class="aspect-pill" id="asp-2">3:4 小红书 · 1080×1440</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  // ===== 数学与确定性随机工具（100% 由 t 驱动，绝不使用 Math.random）=====
+  function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+  function lerp(a, b, u) { return a + (b - a) * u; }
+  function smoothstep(a, b, x) {
+    const u = clamp01((x - a) / (b - a));
+    return u * u * (3 - 2 * u);
+  }
+  function spring(x, w = 15, z = 0.74) {
+    if (x <= 0) return 0;
+    if (x > 3.5) return 1;
+    const wd = w * Math.sqrt(Math.max(1e-6, 1 - z * z));
+    return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + ((z * w) / wd) * Math.sin(wd * x));
+  }
+  function springTrack(t, keys, w = 15, z = 0.74) {
+    let v = keys[0][1];
+    for (let i = 1; i < keys.length; i++) {
+      v += (keys[i][1] - keys[i - 1][1]) * spring(t - keys[i][0], w, z);
+    }
+    return v;
+  }
+  function seededRand(seed) {
+    const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453123;
+    return x - Math.floor(x);
+  }
+
+  // 初始化胶片孔洞
+  const holeHTML = Array.from({ length: 28 }, () => "<span></span>").join("");
+  document.getElementById("holes-top").innerHTML = holeHTML;
+  document.getElementById("holes-bot").innerHTML = holeHTML;
+
+  // 预建胶片帧 DOM
+  const filmBox = document.getElementById("film-frames");
+  const filmCells = [];
+  for (let i = 0; i < 12; i++) {
+    const d = document.createElement("div");
+    d.className = "film-cell";
+    filmBox.appendChild(d);
+    filmCells.push(d);
+  }
+
+  // ===== 镜头 2 子画布绘制函数 =====
+  function drawPixelCanvas(t) {
+    const c = document.getElementById("c-pixel");
+    const ctx = c.getContext("2d");
+    // 离屏小尺寸像素画布：96x26 整数放大，绝对禁用抗锯齿
+    const off = drawPixelCanvas.off || (drawPixelCanvas.off = document.createElement("canvas"));
+    off.width = 96;
+    off.height = 26;
+    const octx = off.getContext("2d");
+    octx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
+
+    // 暗夜天蓝格调底
+    octx.fillStyle = "#1B2432";
+    octx.fillRect(0, 0, 96, 26);
+
+    // 地面像素砖
+    octx.fillStyle = "#2E4057";
+    octx.fillRect(0, 21, 96, 5);
+    octx.fillStyle = "#486581";
+    for (let x = 0; x < 96; x += 6) {
+      octx.fillRect(x, 21, 4, 1);
+    }
+
+    // 30fps 闪烁星星
+    for (let i = 0; i < 14; i++) {
+      const sx = Math.floor(seededRand(i * 13) * 94);
+      const sy = Math.floor(seededRand(i * 29) * 16);
+      const tw = Math.sin(t * 6 + i * 2.1) > 0.3 ? "#F7E396" : "#56708F";
+      octx.fillStyle = tw;
+      octx.fillRect(sx, sy, 1, 1);
+    }
+
+    // 10fps 量化角色（像素小火箭/精灵跳跃推进）
+    const qT = Math.floor(t * 10) / 10;
+    const rx = Math.floor(((qT * 18) % 80) + 8);
+    const bounce = Math.floor(Math.abs(Math.sin(qT * 6.28)) * 4);
+    const ry = 13 - bounce;
+
+    // 像素精灵主体
+    octx.fillStyle = "#D9462F";
+    octx.fillRect(rx, ry, 7, 5);
+    octx.fillStyle = "#F5F1E8";
+    octx.fillRect(rx + 2, ry + 1, 3, 2);
+    octx.fillStyle = "#F4B942";
+    octx.fillRect(rx - 2 - (Math.floor(qT * 10) % 2), ry + 2, 2, 2);
+
+    // 30fps 尾焰像素粒子
+    for (let p = 0; p < 6; p++) {
+      const age = ((t * 3 + p * 0.17) % 1);
+      const px = Math.floor(rx - 2 - age * 14);
+      const py = Math.floor(ry + 2 + (seededRand(p + Math.floor(t * 3)) - 0.5) * 4);
+      octx.fillStyle = age < 0.4 ? "#F6C945" : "#E86A4A";
+      octx.fillRect(px, py, 1, 1);
+    }
+
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.drawImage(off, 0, 0, c.width, c.height);
+  }
+
+  function draw3DCanvas(t) {
+    const c = document.getElementById("c-3d");
+    const ctx = c.getContext("2d");
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // CRT 扫描线网格背景
+    ctx.fillStyle = "#141413";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(255,255,255,0.04)";
+    for (let y = 0; y < H; y += 8) {
+      ctx.fillRect(0, y, W, 2);
+    }
+
+    // 透视投影旋转双层几何体
+    const angY = t * 1.4;
+    const angX = Math.sin(t * 0.9) * 0.45 + 0.35;
+    const cx = W * 0.32, cy = H * 0.5;
+    const fov = 420;
+
+    function proj(v, scale) {
+      let [x, y, z] = v.map(n => n * scale);
+      // 绕 Y 轴
+      const cx1 = x * Math.cos(angY) - z * Math.sin(angY);
+      const cz1 = x * Math.sin(angY) + z * Math.cos(angY);
+      // 绕 X 轴
+      const cy2 = y * Math.cos(angX) - cz1 * Math.sin(angX);
+      const cz2 = y * Math.sin(angX) + cz1 * Math.cos(angX) + 3.4;
+      const k = fov / cz2;
+      return [cx + cx1 * k, cy + cy2 * k];
+    }
+
+    // 立方体顶点与边
+    const verts = [
+      [-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
+      [-1,-1, 1],[1,-1, 1],[1,1, 1],[-1,1, 1]
+    ];
+    const edges = [
+      [0,1],[1,2],[2,3],[3,0],
+      [4,5],[5,6],[6,7],[7,4],
+      [0,4],[1,5],[2,6],[3,7]
+    ];
+
+    const pOut = verts.map(v => proj(v, 0.95));
+    ctx.strokeStyle = "#F5F1E8";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (const [a, b] of edges) {
+      ctx.moveTo(pOut[a][0], pOut[a][1]);
+      ctx.lineTo(pOut[b][0], pOut[b][1]);
+    }
+    ctx.stroke();
+
+    // 内部红色八面体
+    const oct = [[0,1,0],[0,-1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1]];
+    const oEdges = [
+      [0,2],[0,3],[0,4],[0,5],
+      [1,2],[1,3],[1,4],[1,5],
+      [2,4],[4,3],[3,5],[5,2]
+    ];
+    const pIn = oct.map(v => proj(v, 0.72));
+    ctx.strokeStyle = "#D9462F";
+    ctx.lineWidth = 4.5;
+    ctx.beginPath();
+    for (const [a, b] of oEdges) {
+      ctx.moveTo(pIn[a][0], pIn[a][1]);
+      ctx.lineTo(pIn[b][0], pIn[b][1]);
+    }
+    ctx.stroke();
+
+    // 右侧 Shader 扫描示波信息
+    ctx.fillStyle = "#8DD4AE";
+    ctx.font = "700 28px Menlo, monospace";
+    ctx.fillText("FRAG_SHADER // CRT_SCAN", W * 0.56, H * 0.36);
+    ctx.fillStyle = "#C7C0B3";
+    ctx.font = "600 24px Menlo, monospace";
+    ctx.fillText(`ROT_Y = ${(angY % 6.28).toFixed(2)} rad`, W * 0.56, H * 0.56);
+    ctx.fillText(`SCAN  = ${((t * 120) % 100).toFixed(0)}%`, W * 0.56, H * 0.72);
+  }
+
+  function drawAudioCanvas(t) {
+    const c = document.getElementById("c-audio");
+    const ctx = c.getContext("2d");
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // 120 BPM 拍点冲击包络
+    const beatFrac = (t * 2) % 1;
+    const kickEnv = Math.exp(-beatFrac * 5.2);
+
+    const bars = 16;
+    const gap = 14;
+    const bw = (W - 120 - gap * (bars - 1)) / bars;
+    for (let i = 0; i < bars; i++) {
+      const wave = 0.35 + 0.35 * Math.sin(t * 7 + i * 0.65) + 0.3 * Math.cos(t * 11 - i * 0.4);
+      const val = clamp01(0.22 + wave * 0.45 + kickEnv * (i < 5 ? 0.52 : 0.28));
+      const bh = val * (H - 64);
+      const x = 60 + i * (bw + gap);
+      const y = H - 32 - bh;
+      ctx.fillStyle = i < 4 ? "#D9462F" : (i % 2 === 0 ? "#1F6E4A" : "#141413");
+      ctx.beginPath();
+      ctx.roundRect(x, y, bw, bh, 8);
+      ctx.fill();
+    }
+  }
+
+  // ===== 核心渲染入口 window.render(t) =====
+  window.render = function render(t) {
+    const T = Math.max(0, Math.min(10, t));
+
+    // 全局眉标进度与时间码
+    document.getElementById("progress-fill").style.width = `${(T / 10) * 100}%`;
+    const dots = document.querySelectorAll(".progress-dot");
+    dots[0].classList.toggle("active", T >= 0);
+    dots[1].classList.toggle("active", T >= 2.5);
+    dots[2].classList.toggle("active", T >= 5.2);
+    dots[3].classList.toggle("active", T >= 7.8);
+
+    const sec = Math.floor(T);
+    const frm = Math.min(29, Math.floor((T - sec) * 30));
+    const ss = String(sec).padStart(2, "0");
+    const ff = String(frm).padStart(2, "0");
+    document.getElementById("timecode").textContent = `CODE STUDIO · 00:00:${ss}:${ff}`;
+
+    const ch =
+      T < 2.5 ? "01 · 原理" :
+      T < 5.2 ? "02 · 范式" :
+      T < 7.8 ? "03 · 管线" : "04 · 就绪";
+    document.getElementById("chapter-text").textContent = ch;
+
+    const s1 = document.getElementById("scene-1");
+    const s2 = document.getElementById("scene-2");
+    const s3 = document.getElementById("scene-3");
+    const s4 = document.getElementById("scene-4");
+
+    // 互斥显示（切换处保留干净 0.2s 弹簧过渡，不会跨镜头残留）
+    s1.style.display = T < 2.50 ? "block" : "none";
+    s2.style.display = T >= 2.50 && T < 5.20 ? "block" : "none";
+    s3.style.display = T >= 5.20 && T < 7.80 ? "block" : "none";
+    s4.style.display = T >= 7.80 ? "block" : "none";
+
+    // ---------------- 镜头 1 (0.00 - 2.50) ----------------
+    if (T < 2.50) {
+      const out = 1 - smoothstep(2.38, 2.50, T);
+      const codeIn = 0.88 + 0.12 * spring(T + 0.15, 14, 0.78);
+      const codeEl = document.getElementById("s1-code");
+      codeEl.style.opacity = 0.25 + 0.75 * out;
+      codeEl.style.transform = `scale(${(codeIn * (0.94 + 0.06 * out)).toFixed(4)})`;
+
+      // 代码逐行高亮随节拍推进
+      const activeLine = Math.min(6, Math.floor(T / 0.36) + 1);
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(`cl-${i}`).classList.toggle("hl", i === activeLine);
+      }
+      const spVal = spring(T - 0.5, 14, 0.72);
+      document.getElementById("s1-t-val").textContent = `t = ${T.toFixed(2)}s · spring = ${spVal.toFixed(3)}`;
+      document.getElementById("s1-meter").style.width = `${clamp01(spVal) * 100}%`;
+
+      // 右侧标题在第 1 拍 (0.5s) 沉稳上浮落定，第 0 帧本身就保证有内容（code + badge + sub）
+      const titleSpring = spring(T + 0.08, 11, 0.88);
+      const titleEl = document.getElementById("s1-title");
+      titleEl.style.transform = `translateY(${((1 - titleSpring) * 42).toFixed(2)}px)`;
+      document.getElementById("s1-right").style.opacity = 0.25 + 0.75 * out;
+
+      // 12fps 手绘沸腾感曲线
+      const q12 = Math.floor(T * 12);
+      const beatNum = Math.min(4, Math.floor(T / 0.5) + 1);
+      document.getElementById("s1-beat-lbl").textContent = `BEAT 0${beatNum}`;
+
+      const pts = [];
+      const prog = clamp01((T + 0.15) / 1.9);
+      const steps = 40;
+      for (let i = 0; i <= steps; i++) {
+        const u = (i / steps) * prog;
+        const x = 24 + u * 704;
+        const jitter = (seededRand(i * 19 + q12 * 7) - 0.5) * 2.2;
+        const y = 112 - spring(u * 1.4, 13, 0.58) * 78 + jitter;
+        pts.push(`${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`);
+      }
+      document.getElementById("s1-curve").setAttribute("d", pts.join(" "));
+
+      // 拍点红点
+      let dotsSvg = "";
+      [0.2, 0.45, 0.70, 0.95].forEach((bp, idx) => {
+        if (prog >= bp) {
+          const bx = 24 + bp * 704;
+          const by = 112 - spring(bp * 1.4, 13, 0.58) * 78;
+          dotsSvg += `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="7" fill="#D9462F" stroke="#141413" stroke-width="2.5"/>`;
+        }
+      });
+      document.getElementById("s1-beat-dots").innerHTML = dotsSvg;
+    }
+
+    // ---------------- 镜头 2 (2.50 - 5.20) ----------------
+    if (T >= 2.50 && T < 5.20) {
+      const lt = T - 2.50; // 0 .. 2.70
+      const enter = spring(lt, 16, 0.76);
+      const exit = 1 - smoothstep(2.45, 2.70, lt);
+
+      // 光标目标在 4 张卡的中心附近按拍点跳变 (0.35, 0.95, 1.55, 2.15)
+      const cx = springTrack(lt, [
+        [0.00, 1280], [0.15, 420], [0.75, 1320], [1.35, 420], [1.95, 1320]
+      ], 22, 0.80);
+      const cy = springTrack(lt, [
+        [0.00, 120], [0.15, 260], [0.75, 260], [1.35, 635], [1.95, 635]
+      ], 22, 0.80);
+
+      // 点击按压缩放 & 红环涟漪
+      const clickTimes = [0.35, 0.95, 1.55, 2.15];
+      let clickPress = 0;
+      let ringProg = 0;
+      let activeCard = 0;
+      for (let i = 0; i < clickTimes.length; i++) {
+        if (lt >= clickTimes[i] - 0.12) activeCard = i;
+        const dt = lt - clickTimes[i];
+        if (dt >= 0 && dt < 0.35) {
+          clickPress = Math.sin(clamp01(dt / 0.16) * Math.PI) * 0.22;
+          ringProg = dt / 0.35;
+        }
+      }
+
+      // 摄像机微弱跟随当前点击区（禁用 will-change 保文字锐利）
+      const camX = springTrack(lt, [
+        [0, 0], [0.30, 18], [0.90, -18], [1.50, 18], [2.10, -18]
+      ], 10, 0.85);
+      const camY = springTrack(lt, [
+        [0, 0], [0.30, 12], [1.50, -12]
+      ], 10, 0.85);
+      const wrap = document.getElementById("s2-wrap");
+      const enterOp = clamp01(lt / 0.08 + 0.45);
+      const exitOp = 1 - 0.72 * smoothstep(2.55, 2.70, lt);
+      const sc = (0.94 + 0.06 * enter) * (0.95 + 0.05 * exit) * (1.02);
+      wrap.style.opacity = enterOp * exitOp;
+      wrap.style.transform = `translate(${camX.toFixed(2)}px, ${camY.toFixed(2)}px) scale(${sc.toFixed(4)})`;
+
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`bcard-${i}`).classList.toggle("active", i === activeCard);
+      }
+
+      const curEl = document.getElementById("cursor-el");
+      curEl.style.left = `${cx.toFixed(1)}px`;
+      curEl.style.top = `${cy.toFixed(1)}px`;
+      curEl.style.transform = `scale(${(1 - clickPress).toFixed(3)})`;
+
+      const ringEl = document.getElementById("cursor-ring");
+      if (ringProg > 0 && ringProg < 1) {
+        ringEl.style.display = "block";
+        ringEl.style.left = `${(cx - 30).toFixed(1)}px`;
+        ringEl.style.top = `${(cy - 30).toFixed(1)}px`;
+        ringEl.style.opacity = (1 - ringProg).toFixed(2);
+        ringEl.style.transform = `scale(${(0.3 + ringProg * 1.1).toFixed(3)})`;
+      } else {
+        ringEl.style.display = "none";
+      }
+
+      // 液态双边弹簧指示条（前沿 w=25 冲得快，后沿 w=13 拖尾拉长，并用 clip-path 精确反白文字）
+      const tabTargets = [
+        [0.00, 8], [0.65, 192], [1.25, 376], [1.85, 192]
+      ];
+      const leadLeft = springTrack(lt, tabTargets, 25, 0.78);
+      const trailLeft = springTrack(lt, tabTargets, 13, 0.74);
+      const pillL = Math.max(6, Math.min(leadLeft, trailLeft));
+      const pillR = Math.min(554, Math.max(leadLeft, trailLeft) + 176);
+      const pillEl = document.getElementById("liquid-pill");
+      pillEl.style.left = `${pillL.toFixed(1)}px`;
+      pillEl.style.width = `${(pillR - pillL).toFixed(1)}px`;
+      const rightInset = Math.max(0, 560 - pillR);
+      document.getElementById("liquid-light").style.clipPath = `inset(0 ${rightInset.toFixed(1)}px 0 ${pillL.toFixed(1)}px round 10px)`;
+
+      // 实时重绘像素、3D、频谱子画布
+      drawPixelCanvas(T);
+      draw3DCanvas(T);
+      drawAudioCanvas(T);
+    }
+
+    // ---------------- 镜头 3 (5.20 - 7.80) ----------------
+    if (T >= 5.20 && T < 7.80) {
+      const lt = T - 5.20; // 0 .. 2.60
+      const exit = 1 - smoothstep(2.48, 2.60, lt);
+      const wrap = document.getElementById("s3-wrap");
+      wrap.style.opacity = clamp01(lt / 0.08 + 0.55) * (0.35 + 0.65 * exit);
+      wrap.style.transform = `scale(${(0.95 + 0.05 * exit).toFixed(4)})`;
+
+      // 4 张带胶带稿纸卡依次弹簧升起摆正（起始即带前两张可见，绝不空屏）
+      const tilts = [-1.4, 1.2, -1.0, 1.4];
+      for (let i = 0; i < 4; i++) {
+        const s = spring(lt + 0.16 - i * 0.16, 17, 0.70);
+        const card = document.getElementById(`pcard-${i}`);
+        const rot = tilts[i] * (1 - clamp01(s) * 0.45);
+        card.style.opacity = clamp01(0.25 + s * 1.3);
+        card.style.transform = `translateY(${((1 - s) * 56).toFixed(1)}px) rotate(${rot.toFixed(2)}deg)`;
+      }
+
+      // 朱砂红连接线随进度从左向右揭开
+      const lineProg = clamp01(lt / 1.35);
+      document.getElementById("pipe-clip-rect").setAttribute("width", (lineProg * 1752).toFixed(1));
+
+      // 胶片帧轨连续滚动
+      const baseFrame = Math.floor(T * 30);
+      const offsetPx = ((T * 180) % 198);
+      filmCells.forEach((cell, idx) => {
+        const fNum = Math.max(1, baseFrame - 3 + idx * 3);
+        const isNow = idx === 4;
+        cell.classList.toggle("now", isNow);
+        cell.innerHTML = `<span>F${String(fNum).padStart(3, "0")}</span><span>${isNow ? "● LIVE" : "30fps"}</span>`;
+        cell.style.transform = `translateX(${(-offsetPx).toFixed(1)}px)`;
+      });
+
+      // 森绿质检盖印徽章（t=6.75s 即 lt=1.55s 活泼弹性弹入）
+      const stS = spring(lt - 1.50, 19, 0.50);
+      const stamp = document.getElementById("qa-stamp");
+      stamp.style.opacity = clamp01(stS * 2);
+      stamp.style.transform = `scale(${(0.3 + 0.7 * stS).toFixed(4)}) rotate(-4deg)`;
+    }
+
+    // ---------------- 镜头 4 (7.80 - 10.00) ----------------
+    if (T >= 7.80) {
+      const lt = T - 7.80; // 0 .. 2.20
+      const vfS = spring(lt + 0.10, 15, 0.78);
+      const wrap = document.getElementById("s4-wrap");
+      wrap.style.opacity = clamp01(lt / 0.06 + 0.65);
+
+      const vf = document.getElementById("viewfinder");
+      vf.style.transform = `scale(${(0.91 + 0.09 * vfS).toFixed(4)})`;
+
+      // 主标题随取景框同步入画、沉稳落定，绝不空框
+      const tS = spring(lt + 0.06, 11, 0.88);
+      const vfMain = document.getElementById("vf-main");
+      vfMain.style.opacity = clamp01(0.45 + tS * 1.2);
+      vfMain.style.transform = `translateY(${((1 - tS) * 28).toFixed(1)}px)`;
+
+      const subS = spring(lt - 0.06, 12, 0.85);
+      const vfSub = document.getElementById("vf-sub");
+      vfSub.style.opacity = clamp01(0.20 + subS * 1.3);
+      vfSub.style.transform = `translateY(${((1 - subS) * 20).toFixed(1)}px)`;
+
+      // REC 红点节奏闪烁
+      document.getElementById("rec-dot").style.opacity = Math.sin(T * Math.PI * 4) > -0.3 ? "1" : "0.25";
+
+      // 三枚多画幅胶囊依次弹亮
+      const pillTimes = [0.20, 0.55, 0.90];
+      pillTimes.forEach((pt, idx) => {
+        const ps = spring(lt - pt, 18, 0.72);
+        const el = document.getElementById(`asp-${idx}`);
+        el.style.opacity = clamp01(ps * 1.8);
+        el.style.transform = `translateY(${((1 - ps) * 32).toFixed(1)}px)`;
+        // 当前亮起：16:9 选中最久，或在轮询后保持 16:9 亮起
+        const isLit = (lt >= 0.25 && lt < 0.60 && idx === 0) ||
+                      (lt >= 0.60 && lt < 0.95 && idx === 1) ||
+                      (lt >= 0.95 && lt < 1.30 && idx === 2) ||
+                      (lt >= 1.30 && idx === 0);
+        el.classList.toggle("lit", isLit);
+      });
+    }
+  };
+
+  // 初始化第一帧，待字体加载完毕置 window.ready = true
+  window.render(0);
+  const doneReady = () => {
+    window.render(0);
+    window.ready = true;
+  };
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(doneReady);
+  } else {
+    doneReady();
+  }
+
+  // 仅当手动浏览器带 ?play=1 打开预览时循环播放，绝不干扰 Playwright 逐帧截图
+  if (new URLSearchParams(location.search).get("play") === "1") {
+    const start = performance.now();
+    const tick = (now) => {
+      window.render(((now - start) / 1000) % 10);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+})();
+</script>
+</body>
+</html>

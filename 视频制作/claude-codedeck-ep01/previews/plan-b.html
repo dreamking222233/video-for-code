@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px; height: 1920px; overflow: hidden;
+    background: #FAF7F0;
+    font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #wrap { position: relative; width: 1080px; height: 1920px; }
+  canvas { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+  /* Safe area overlay content: top >=150, bottom >=350, right >=130 */
+  .safe {
+    position: absolute; top: 155px; left: 64px; right: 132px; bottom: 355px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    pointer-events: none;
+  }
+  .kicker {
+    display: inline-block; background: #1D3557; color: #FAF7F0;
+    font-size: 30px; font-weight: 800; padding: 10px 24px;
+    border-radius: 10px; width: fit-content;
+    transform: rotate(-1.5deg);
+    box-shadow: 6px 6px 0 #E76F51;
+  }
+  .big-title {
+    margin-top: 24px;
+    font-family: "Songti SC", "STSong", serif;
+    font-size: 74px; font-weight: 900; line-height: 1.16;
+    color: #141413;
+  }
+  .big-title .hl {
+    background: linear-gradient(transparent 58%, rgba(231,111,81,0.42) 58%);
+    padding: 0 6px;
+  }
+  .whiteboard-card {
+    margin-top: auto;
+    background: #FFFFFF;
+    border: 4px solid #1D3557;
+    border-radius: 24px;
+    padding: 32px 36px;
+    box-shadow: 10px 12px 0 #1D3557;
+    transform: rotate(0.8deg);
+  }
+  .wb-header {
+    font-family: "SF Mono", monospace;
+    font-size: 24px; font-weight: 800; color: #E76F51;
+    margin-bottom: 12px;
+  }
+  .wb-quote {
+    font-size: 40px; font-weight: 900; color: #1D3557; line-height: 1.35;
+  }
+  .wb-sub {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 2px dashed rgba(29,53,87,0.25);
+    font-size: 30px; font-weight: 700; color: #3D405B;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .tag-pill {
+    background: #10B981; color: #FFFFFF;
+    padding: 8px 20px; border-radius: 999px; font-size: 26px; font-weight: 800;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c" width="2160" height="3840"></canvas>
+  <div class="safe">
+    <div>
+      <div class="kicker">离谱真事 · 物理对抗风控</div>
+      <div class="big-title">骑摩托 <span class="hl">1500 公里</span><br>去印尼下乡收 Claude？</div>
+    </div>
+
+    <div class="whiteboard-card">
+      <div class="wb-header">📍 巴厘岛 ➔ 苏门答腊 · 现场白板合影</div>
+      <div class="wb-quote">“印尼老哥助力中国科研<br>当地大妈名下 3 个 Claude 号！”</div>
+      <div class="wb-sub">
+        <span>技术风控遇上物理下乡…</span>
+        <span class="tag-pill">其实不用这么累 →</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function hash(n) {
+  let x = Math.sin(n * 127.1 + 311.7) * 43758.5453123;
+  return x - Math.floor(x);
+}
+function jitter(seed, amp) {
+  return (hash(seed) - 0.5) * 2 * amp;
+}
+function wobblyLine(ctx, x1, y1, x2, y2, seed, amp = 3.5) {
+  ctx.beginPath();
+  const steps = 14;
+  for (let i = 0; i <= steps; i++) {
+    const u = i / steps;
+    const x = x1 + (x2 - x1) * u + jitter(seed + i * 7.3, amp);
+    const y = y1 + (y2 - y1) * u + jitter(seed + i * 13.1, amp);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+}
+function wobblyCircle(ctx, cx, cy, r, seed, amp = 3) {
+  ctx.beginPath();
+  const steps = 28;
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * Math.PI * 2;
+    const rr = r + jitter(seed + i * 5.7, amp);
+    const x = cx + Math.cos(a) * rr;
+    const y = cy + Math.sin(a) * rr;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+}
+
+window.ready = false;
+window.render = function(t) {
+  const c = document.getElementById('c');
+  const ctx = c.getContext('2d');
+  ctx.save();
+  ctx.scale(2, 2); // logical 1080x1920
+  ctx.clearRect(0, 0, 1080, 1920);
+
+  const boil = Math.floor(t * 12);
+
+  // Notebook horizontal ruled lines
+  ctx.strokeStyle = 'rgba(29, 53, 87, 0.08)';
+  ctx.lineWidth = 2;
+  for (let y = 120; y < 1840; y += 54) {
+    ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(1000, y); ctx.stroke();
+  }
+  // Red margin line
+  ctx.strokeStyle = 'rgba(231, 111, 81, 0.28)';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(52, 0); ctx.lineTo(52, 1920); ctx.stroke();
+
+  // Map Box in middle (y: 530..1130, x: 64..948)
+  ctx.fillStyle = '#EFE9DB';
+  ctx.strokeStyle = '#1D3557';
+  ctx.lineWidth = 4.5;
+  ctx.beginPath();
+  ctx.roundRect(64, 540, 884, 590, 28);
+  ctx.fill();
+  ctx.stroke();
+
+  // Ocean waves
+  ctx.strokeStyle = 'rgba(69, 123, 157, 0.35)';
+  ctx.lineWidth = 3;
+  for (let wy = 590; wy < 1090; wy += 95) {
+    for (let wx = 110; wx < 880; wx += 170) {
+      wobblyLine(ctx, wx, wy, wx + 65, wy, boil * 100 + wy + wx, 2.5);
+    }
+  }
+
+  // Hand-drawn Sumatra Island (top-left of map)
+  ctx.fillStyle = '#D8E2DC';
+  ctx.strokeStyle = '#1D3557';
+  ctx.lineWidth = 4.5;
+  ctx.beginPath();
+  const sumPts = [[130,630],[230,600],[370,690],[450,790],[390,850],[250,770],[140,690]];
+  sumPts.forEach((p, i) => {
+    const px = p[0] + jitter(boil*31 + i*3, 3);
+    const py = p[1] + jitter(boil*47 + i*5, 3);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  });
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Java + Bali Island (bottom-right of map)
+  ctx.beginPath();
+  const javaPts = [[460,910],[670,925],[750,965],[680,1000],[450,975]];
+  javaPts.forEach((p, i) => {
+    const px = p[0] + jitter(boil*19 + i*7, 3);
+    const py = p[1] + jitter(boil*23 + i*9, 3);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  });
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Bali Island
+  ctx.fillStyle = '#FFE5D9';
+  ctx.beginPath();
+  ctx.arc(815 + jitter(boil*11, 2), 972 + jitter(boil*13, 2), 34, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+
+  // Dashed red route from Bali (815,972) -> Sumatra (270,700)
+  ctx.save();
+  ctx.strokeStyle = '#E76F51';
+  ctx.lineWidth = 7;
+  ctx.setLineDash([18, 14]);
+  ctx.beginPath();
+  ctx.moveTo(815, 965);
+  ctx.quadraticCurveTo(560, 770, 285, 705);
+  ctx.stroke();
+  ctx.restore();
+
+  // Pin markers
+  ctx.fillStyle = '#E76F51';
+  ctx.beginPath(); ctx.arc(815, 972, 13, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(285, 705, 15, 0, Math.PI*2); ctx.fill();
+
+  // Labels on map
+  ctx.fillStyle = '#1D3557';
+  ctx.font = '900 32px "PingFang SC", sans-serif';
+  ctx.fillText('出发：巴厘岛', 690, 1055);
+  ctx.fillText('终点：苏门答腊 (面对面KYC)', 115, 600);
+
+  // Distance callout badge
+  ctx.save();
+  ctx.translate(555, 755);
+  ctx.rotate(-0.14);
+  ctx.fillStyle = '#E76F51';
+  ctx.beginPath(); ctx.roundRect(-145, -36, 290, 68, 16); ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '900 32px "SF Mono", "PingFang SC", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🛵 摩旅 1500 KM', 0, 10);
+  ctx.restore();
+
+  // Cute hand-drawn scooter at midpoint (475, 835)
+  const sx = 460, sy = 855;
+  ctx.strokeStyle = '#1D3557';
+  ctx.lineWidth = 5.5;
+  wobblyCircle(ctx, sx - 36, sy + 22, 22, boil * 5 + 1, 2);
+  wobblyCircle(ctx, sx + 38, sy + 22, 22, boil * 5 + 9, 2);
+  ctx.fillStyle = '#F4A261';
+  ctx.beginPath();
+  ctx.moveTo(sx - 40, sy + 18);
+  ctx.lineTo(sx - 10, sy - 18);
+  ctx.lineTo(sx + 25, sy - 18);
+  ctx.lineTo(sx + 42, sy + 18);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  // Rider helmet
+  ctx.fillStyle = '#E76F51';
+  ctx.beginPath(); ctx.arc(sx + 2, sy - 48, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  // Exhaust puffs
+  ctx.strokeStyle = '#5C5850'; ctx.lineWidth = 3.5;
+  wobblyCircle(ctx, sx + 74, sy + 16, 9, boil * 8 + 3, 2);
+  wobblyCircle(ctx, sx + 96, sy + 10, 13, boil * 8 + 7, 2);
+
+  // Stamp on top-right of map: 3个账号
+  ctx.save();
+  ctx.translate(775, 655);
+  ctx.rotate(0.12);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.strokeStyle = '#1D3557';
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.roundRect(-130, -52, 260, 104, 16); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#E76F51';
+  ctx.font = '900 28px "PingFang SC", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('印尼大妈名下', 0, -8);
+  ctx.fillStyle = '#1D3557';
+  ctx.font = '900 32px "PingFang SC", sans-serif';
+  ctx.fillText('3 个 Claude 号 😂', 0, 34);
+  ctx.restore();
+
+  ctx.restore();
+};
+document.fonts.ready.then(() => { window.render(1.2); window.ready = true; });
+</script>
+</body>
+</html>

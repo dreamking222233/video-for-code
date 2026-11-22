@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #F5F1E8;
+    color: #18181B;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #stage {
+    position: relative; width: 1920px; height: 1080px;
+    padding: 64px 84px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  /* Paper dot matrix */
+  #bg-dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(24,24,27,0.09) 1.5px, transparent 1.5px);
+    background-size: 28px 28px;
+  }
+  .topbar {
+    position: relative; z-index: 2;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 2px solid #18181B;
+    padding-bottom: 18px;
+  }
+  .topbar-left {
+    display: flex; align-items: center; gap: 18px;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 20px; font-weight: 600; letter-spacing: 0.04em;
+  }
+  .badge-issue {
+    background: #18181B; color: #F5F1E8;
+    padding: 5px 14px; border-radius: 4px; font-size: 18px;
+  }
+  .topbar-right {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 20px; color: #5C5850;
+  }
+  .headline-row {
+    position: relative; z-index: 2;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: 10px;
+  }
+  h1 {
+    font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+    font-size: 68px; line-height: 1.12; font-weight: 900;
+    letter-spacing: -0.02em; color: #141413;
+  }
+  h1 .hl-red { color: #D97757; }
+  h1 .hl-green { color: #047857; }
+  .sub-note {
+    font-size: 26px; color: #5C5850; font-weight: 500;
+    text-align: right; max-width: 560px; line-height: 1.45;
+  }
+  .bento {
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1fr 1.15fr; gap: 36px;
+    height: 670px; margin-top: 14px;
+  }
+  .card {
+    border-radius: 26px; padding: 38px 42px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .card-bad {
+    background: #EBE4D5;
+    border: 2px solid rgba(24,24,27,0.16);
+  }
+  .card-good {
+    background: #FFFFFF;
+    border: 3px solid #18181B;
+    box-shadow: 12px 14px 0px #18181B;
+  }
+  .card-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 20px; font-weight: 700;
+    padding: 8px 16px; border-radius: 999px;
+    width: fit-content;
+  }
+  .tag-warn { background: rgba(217, 70, 47, 0.14); color: #B93824; border: 1.5px solid rgba(217,70,47,0.35); }
+  .tag-ok { background: rgba(16, 185, 129, 0.16); color: #047857; border: 1.5px solid rgba(16,185,129,0.45); }
+
+  .receipt-title {
+    font-size: 34px; font-weight: 800; margin-top: 16px; color: #18181B;
+  }
+  .receipt-list {
+    margin-top: 18px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .receipt-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; background: rgba(255,255,255,0.66);
+    border-radius: 14px; border: 1px dashed rgba(24,24,27,0.22);
+    font-size: 26px; font-weight: 600;
+  }
+  .receipt-item .price {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-weight: 800; color: #B93824; font-size: 28px;
+  }
+  .total-bar {
+    margin-top: 18px; padding-top: 18px;
+    border-top: 2.5px solid #18181B;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .total-label { font-size: 26px; font-weight: 700; color: #5C5850; }
+  .total-num {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 54px; font-weight: 900; color: #D9462F;
+  }
+  .stamp {
+    position: absolute; right: 34px; top: 32px;
+    border: 4px solid #D9462F; color: #D9462F;
+    padding: 6px 18px; border-radius: 10px;
+    font-size: 28px; font-weight: 900; letter-spacing: 0.08em;
+    background: rgba(245, 241, 232, 0.9);
+  }
+
+  /* Right Card: CodeDeck Workbench */
+  .cd-header {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cd-brand {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 36px; font-weight: 900; letter-spacing: -0.02em;
+  }
+  .cd-dot {
+    width: 18px; height: 18px; border-radius: 50%; background: #10B981;
+    box-shadow: 0 0 0 6px rgba(16,185,129,0.2);
+  }
+  .terminal-window {
+    background: #141619; color: #F4F4F0;
+    border-radius: 18px; padding: 24px 28px;
+    font-family: "SF Mono", "Menlo", monospace;
+    margin-top: 16px; flex: 1;
+    display: flex; flex-direction: column; justify-content: space-between;
+    border: 1px solid #2C3038;
+  }
+  .term-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 14px; border-bottom: 1px solid #2A2E37;
+    font-size: 19px; color: #A1A1AA;
+  }
+  .term-dots { display: flex; gap: 8px; align-items: center; }
+  .td { width: 12px; height: 12px; border-radius: 50%; }
+  .term-ping {
+    background: rgba(16,185,129,0.18); color: #34D399;
+    padding: 4px 12px; border-radius: 999px; font-weight: 700; font-size: 18px;
+  }
+  .term-body {
+    margin-top: 16px; font-size: 22px; line-height: 1.68;
+  }
+  .c-claude { color: #D97757; font-weight: 700; }
+  .c-green { color: #34D399; font-weight: 700; }
+  .c-muted { color: #9CA3AF; }
+  .approve-box {
+    margin-top: 14px; background: #1E2229;
+    border: 1.5px solid #34D399; border-radius: 12px;
+    padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .approve-btn {
+    background: #10B981; color: #052E16;
+    font-weight: 800; padding: 8px 20px; border-radius: 8px; font-size: 20px;
+  }
+  .pills-row {
+    display: flex; gap: 14px; margin-top: 18px;
+  }
+  .pill {
+    flex: 1; background: #FAF9F5; border: 1.5px solid #E4E4DF;
+    border-radius: 14px; padding: 14px 16px;
+    font-size: 22px; font-weight: 700; color: #18181B;
+    text-align: center;
+  }
+  .pill span { color: #047857; font-family: "SF Mono", monospace; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg-dots"></div>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="badge-issue">ISSUE #01 · 深度实测</span>
+      <span>CLAUDE CODE 国内稳定使用指南</span>
+    </div>
+    <div class="topbar-right">codedeck.top · 独立海外服务器直连</div>
+  </div>
+
+  <div class="headline-row">
+    <h1>别再花冤枉钱折腾了，<br><span class="hl-green">海外服务器直连</span>开机即用</h1>
+    <div class="sub-note">从「摩托下乡收号」到「月租千元物理机」<br>算清成本账，给 Claude 安一个专属海外工位</div>
+  </div>
+
+  <div class="bento">
+    <div class="card card-bad" id="cardL">
+      <div class="stamp" id="stamp">门槛劝退</div>
+      <div>
+        <div class="card-tag tag-warn">× 传统海外物理机代部署账单</div>
+        <div class="receipt-title">单独租机 + 高阶订阅月成本</div>
+        <div class="receipt-list">
+          <div class="receipt-item">
+            <span>海外 Mac mini 物理机月租</span>
+            <span class="price">$159 /月 (≈¥1,060)</span>
+          </div>
+          <div class="receipt-item">
+            <span>代开 Max 档位套餐</span>
+            <span class="price">$360 /月</span>
+          </div>
+          <div class="receipt-item">
+            <span>代开 Ultra 顶配套餐</span>
+            <span class="price">$520 /月</span>
+          </div>
+        </div>
+      </div>
+      <div class="total-bar">
+        <span class="total-label">普通开发者每月硬开支</span>
+        <span class="total-num">¥2,500–3,700+</span>
+      </div>
+    </div>
+
+    <div class="card card-good" id="cardR">
+      <div class="cd-header">
+        <div class="cd-brand">
+          <div class="cd-dot"></div>
+          <span>CodeDeck 远程工作台</span>
+        </div>
+        <div class="card-tag tag-ok">✓ 一人一台 · 独立公网 IP</div>
+      </div>
+
+      <div class="terminal-window">
+        <div class="term-bar">
+          <div class="term-dots">
+            <div class="td" style="background:#EF4444"></div>
+            <div class="td" style="background:#F59E0B"></div>
+            <div class="td" style="background:#10B981"></div>
+            <span style="margin-left:10px;color:#E4E4E7;font-weight:600;">root@sg-01 · ~/shop (你的专属服务器)</span>
+          </div>
+          <div class="term-ping">🇸🇬 新加坡直连 · 12ms</div>
+        </div>
+        <div class="term-body">
+          <div><span class="c-claude">● Claude Opus</span> 正在执行长任务（笔记本合盖照常运行）</div>
+          <div class="c-muted">  ├─ Write  src/lib/oauth.ts (+64)</div>
+          <div class="c-muted">  └─ Edit   src/pages/login.tsx (+18 −2)</div>
+          <div class="approve-box">
+            <span><span style="color:#FBBF24;font-weight:700;">! 审批请求：</span>运行 <span class="c-green">npm test</span>（不碰本地电脑）</span>
+            <span class="approve-btn">允许执行 ↵</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pills-row">
+        <div class="pill"><span>7×24h</span> 合盖不断连</div>
+        <div class="pill">每一步<span>由你审批</span></div>
+        <div class="pill">凭据留在<span>自己服务器</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function spring(x, w = 15, z = 0.74) {
+  if (x <= 0) return 0;
+  const wd = w * Math.sqrt(1 - z * z);
+  return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + (z * w / wd) * Math.sin(wd * x));
+}
+window.ready = false;
+window.render = function(t) {
+  const sL = spring(t - 0.1, 15, 0.75);
+  const sR = spring(t - 0.28, 15, 0.72);
+  const sStamp = spring(t - 0.55, 20, 0.52);
+
+  const cardL = document.getElementById('cardL');
+  const cardR = document.getElementById('cardR');
+  const stamp = document.getElementById('stamp');
+
+  cardL.style.transform = `translateY(${(1 - sL) * 40}px)`;
+  cardL.style.opacity = Math.min(1, sL * 1.4);
+
+  cardR.style.transform = `translateY(${(1 - sR) * 50}px) scale(${0.96 + 0.04 * sR})`;
+  cardR.style.opacity = Math.min(1, sR * 1.4);
+
+  stamp.style.transform = `rotate(${-14 + (1 - sStamp) * 22}deg) scale(${0.5 + 0.5 * sStamp})`;
+  stamp.style.opacity = Math.min(1, sStamp * 1.5);
+};
+document.fonts.ready.then(() => { window.render(1.5); window.ready = true; });
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+  275/2753 samples, 12s
+  550/2753 samples, 33s
+  825/2753 samples, 59s
+  1100/2753 samples, 75s
+  1375/2753 samples, 92s
+  1650/2753 samples, 106s
+  1925/2753 samples, 121s
+  2200/2753 samples, 135s
+  2475/2753 samples, 148s
+  2750/2753 samples, 160s
+out/final.mp4: 2753 frames x 1 samples, 1920x1080 @ 30fps, rendered in 161.3s
