@@ -1,9 +1,9 @@
 # EP01 · 如何在国内稳定使用 Claude（CodeDeck）
 
-成片：`out/final.mp4` — **91.78s** / 1920×1080 / 30fps / AAC 192k，**−14.2 LUFS，真峰值 −1.8 dBFS**
+成片：`out/final.mp4` — **97.47s** / 1920×1080 / 30fps / AAC 192k，**−14.2 LUFS，真峰值 −2.4 dBFS**（v2 画面 + 放慢旁白）
 
 配音：`cosy_v2`（`cosyvoice-v3.5-plus` / `voice_id: cosyvoice-v3.5-plus-dshv2-de51050804324850ad05118b2b3cde4d`）
-旁白源：`audio/final/vo_v2_matched_91s78.wav`（91.78s / 48k mono，−18.1 LUFS）+ 同目录 `vo_marks_v2_91s78.json`
+旁白：`audio/clone/*.wav` 逐镜生成（`audio/make_vo.py`，音色 `qwen_v2_24`，rate 1.36，5.28 字/秒），拼接为 `vo_clone.wav` → 降噪 `vo_clean.wav`
 
 ## 三种改法，选一条走
 
@@ -18,7 +18,7 @@ $PY audio/synth_mix.py     # 配乐/音效跟随新 marks 重排（BGM 设计不
 $PY audio/master.py        # → −14 LUFS / TP ≤ −1.5（已补偿 alimiter 5ms lookahead）
 $PY build_html.py          # 字幕、镜头、定版卡按新 marks 重排
 $PY /Volumes/文件/自媒体/.agents/skills/code-video-studio/scripts/render.py \
-   index.html out/final.mp4 --size 1920x1080 --fps 30 --duration 91.78 --audio audio/mix_norm.wav
+   index.html out/final.mp4 --size 1920x1080 --fps 30 --duration 97.483 --audio audio/mix_norm.wav
 ```
 
 > 旁白时长与 `marks.total` 必须一致（±0.05s），脚本会先校验再动手。
@@ -31,7 +31,7 @@ cd /Volumes/文件/自媒体/视频制作/claude-codedeck-ep01
 PY=/Volumes/environment/Python/anaconda3/bin/python3
 
 # 1. 改 audio/vo_lines.json 里的 6 段文案
-$PY audio/make_vo.py      # tts.py cosy_plus, rate 1.55, 出 marks
+$PY audio/make_vo.py --rate 1.36 --gap 0.28 --tail 2.6   # qwen_v2_24, 5.3 字/秒, 出 marks
 $PY audio/synth_mix.py
 $PY audio/master.py
 $PY build_html.py

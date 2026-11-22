@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""调用 音频训练/tts.py（cosy_plus 克隆音色）逐句生成配音，并产出 marks 驱动的时间轴。
+"""调用 音频训练/tts.py（默认音色 qwen_v2_24）逐句生成配音，并产出 marks 驱动的时间轴。
 
 用法：
     export DASHSCOPE_API_KEY=sk-xxx
@@ -20,17 +20,15 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 TTS = pathlib.Path("/Volumes/文件/自媒体/音频训练/tts.py")
-RATE = "1.55"
-GAP = 0.35
 SR = 48000
 
 
-def run_tts(text, out_wav, marks_out):
+def run_tts(text, out_wav, marks_out, rate):
     cmd = [
         sys.executable, str(TTS),
         "--text", text,
         "--out", str(out_wav),
-        "--rate", RATE,
+        "--rate", str(rate),
         "--unit", "sentence",
         "--marks-out", str(marks_out),
         "--json",
@@ -94,6 +92,14 @@ def split_display(text, max_chars=24):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--rate", type=float, default=1.18, help="语速倍率；1.0≈4.7字/秒，1.18≈5.4")
+    ap.add_argument("--gap", type=float, default=0.28, help="镜间停顿")
+    ap.add_argument("--tail", type=float, default=2.6, help="片尾留给定版卡的秒数")
+    a = ap.parse_args()
+    rate, gap, tail = a.rate, a.gap, a.tail
+
     if not os.environ.get("DASHSCOPE_API_KEY"):
         print("缺少 DASHSCOPE_API_KEY（tts.py 需要它，缺失会 exit 2）", file=sys.stderr)
         sys.exit(2)
@@ -106,24 +112,31 @@ def main():
     for i, ln in enumerate(lines):
         wav = cdir / f"{ln['id']}.wav"
         mk = cdir / f"{ln['id']}_marks.json"
-        info = run_tts(ln["text"], wav, mk)
+        info = run_tts(ln["text"], wav, mk, float(ln.get("rate", rate)))
         d = dur(wav)
         parts.append(wav)
         scenes.append({"id": ln["id"], "text": ln["text"],
                        "start": round(t, 3), "end": round(t + d, 3)})
         print(f"  [{i+1}/{len(lines)}] {ln['id']}: {d:.2f}s  (cps {info.get('characters_per_sec')})",
               file=sys.stderr)
-        t += d + GAP
+        t += d + gap
 
     vo = HERE / "vo_clone.wav"
-    concat(parts, GAP, vo)
+    concat(parts, gap, vo)
     total_vo = dur(vo)
 
-    # 降噪：tts 输出带 -65dBFS 宽带嘶声，母带放大会变明显，先压掉
+    # 降噪：压掉底噪，但要补偿 anlmdn 的群延迟（实测 380 采样 = 7.92ms），
+    # 否则整条旁白会比字幕/画面晚 1/4 帧。
     clean = HERE / "vo_clean.wav"
+    LAG = 380
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(vo),
-                    "-af", "highpass=f=75,anlmdn=s=7:p=0.002:r=0.006",
+                    "-af", f"highpass=f=75,anlmdn=s=7:p=0.002:r=0.006,"
+                           f"atrim=start_sample={LAG},asetpts=N/SR/TB,"
+                           f"apad=whole_dur={total_vo:.5f}",
+                    "-t", f"{total_vo:.5f}",
                     "-ar", str(SR), "-ac", "1", "-c:a", "pcm_s16le", str(clean)], check=True)
+    if abs(dur(clean) - total_vo) > 0.02:
+        sys.exit(f"降噪后时长 {dur(clean)} 与旁白 {total_vo} 不一致")
     print(f"  denoised -> {clean}", file=sys.stderr)
 
     # 字幕：镜内按字数比例分配时间
@@ -140,13 +153,27 @@ def main():
             subs.append([round(cursor, 3), round(cursor + d, 3), c])
             cursor += d
 
-    total = round(total_vo + 1.2, 3)  # 尾部留 1.2s 给品牌定版
-    tl = {"total": total, "vo_total": round(total_vo, 3),
-          "rate": float(RATE), "gap": GAP, "scenes": scenes, "subs": subs}
+    # 字幕行尾不要挂「，」「、」：把标点并到下一行开头
+    for i in range(len(subs) - 1):
+        while subs[i][2] and subs[i][2][-1] in "，、":
+            subs[i + 1][2] = subs[i][2][-1] + subs[i + 1][2]
+            subs[i][2] = subs[i][2][:-1]
+
+    # 桥接镜间小间隙，避免字幕条"消失-再出现"闪一下
+    for i in range(len(subs) - 1):
+        g = subs[i + 1][0] - subs[i][1]
+        if 0 < g <= 0.30:
+            subs[i][1] = round(subs[i + 1][0], 3)
+
+    vo_end = round(scenes[-1]["end"], 3)
+    total = round(vo_end + tail, 3)
+    cps = sum(len(x["text"]) for x in lines) / total_vo
+    tl = {"total": total, "vo_total": round(total_vo, 3), "vo_end": vo_end,
+          "rate": rate, "gap": gap, "scenes": scenes, "subs": subs}
     (HERE / "vo_timeline.json").write_text(
         json.dumps(tl, ensure_ascii=False, indent=1), encoding="utf-8")
 
-    print(f"VO {total_vo:.2f}s -> timeline total {total}s, {len(subs)} subtitle chunks",
+    print(f"VO {total_vo:.2f}s ({cps:.2f} 字/秒) -> 片长 {total}s, {len(subs)} 条字幕",
           file=sys.stderr)
     print(json.dumps({"ok": True, "total": total, "scenes": len(scenes), "subs": len(subs)}))
 

@@ -2,7 +2,7 @@
 
 这是一个**「用代码做视频」**的自媒体工程：画面不是剪辑软件做出来的，而是 HTML/CSS/Canvas + JS 时间函数，由无头浏览器逐帧截图、FFmpeg 合成；配音由云端 TTS API 生成；配乐和音效由 numpy 从零合成。
 
-当前已有成片：**EP01《如何在国内稳定使用 Claude》**（CodeDeck 产品向，91.78s，1920×1080；画面 v2 已按官网设计语言重做）。
+当前已有成片：**EP01《如何在国内稳定使用 Claude》**（CodeDeck 产品向，**97.47s**，1920×1080；画面 v2 已按官网设计语言重做，旁白 qwen_v2_24 / rate 1.36 / 5.3 字每秒）。
 
 > 本文写给「接手的人或 AI」。所有命令都可以直接复制执行。若你在另一台电脑上，请先看 §2 的路径替换说明。
 
@@ -115,7 +115,7 @@ cd "$ROOT/视频制作/claude-codedeck-ep01"
 |---|---|---|
 | `audio/final/vo_qv2_92s22.wav` | `vo_marks_qv2_92s22.json` | 92.22s（**音色最新、最推荐**） |
 | `audio/final/vo_qv2_matched_91s78.wav` | `vo_marks_qv2_91s78.json` | 91.76s |
-| `audio/final/vo_v2_matched_91s78.wav` | `vo_marks_v2_91s78.json` | 91.78s（当前成片用这条） |
+| `audio/final/vo_v2_matched_91s78.wav` | `vo_marks_v2_91s78.json` | 91.78s（旧成片用过这条） |
 
 ```bash
 # ① 旁白接入时间轴（校验时长、降噪、补偿滤波器延迟、桥接字幕间隙）
@@ -138,14 +138,17 @@ $PY "$ROOT/.agents/skills/code-video-studio/scripts/render.py" \
 ```
 
 > `use_v2_vo.py` 里的源文件是**写死**的（`VO_SRC` / `MARKS` 两个常量）。换旁白 = 改这两个常量，或在同目录覆盖同名文件。
-> 渲染 91.78s ≈ 3 分钟（2750 帧，Apple Silicon 实测 158s）。
+> 渲染 97.47s ≈ 3.5 分钟（2924 帧，Apple Silicon 实测 206s）。
 
 ### 4.2 情形 B：改文案、重新合成配音
 
 ```bash
 export DASHSCOPE_API_KEY=sk-xxx      # 只放环境变量
 # 1. 改 audio/vo_lines.json 里的 6 段文案（id 保持不变）
-$PY audio/make_vo.py                 # 调 音频训练/tts.py 逐镜合成 + 出 marks
+$PY audio/make_vo.py --rate 1.36 --gap 0.28 --tail 2.6
+#   调 音频训练/tts.py 逐镜合成（默认音色 qwen_v2_24）+ 出 marks
+#   单镜想单独放慢：在该条文案里加 "rate": 1.20
+#   rate 实测：1.36 ≈ 5.3 字/秒（舒服）；1.18 ≈ 4.6 字/秒（很慢）；1.45 ≈ 6.4 字/秒（偏快）
 $PY audio/synth_mix.py --stems
 $PY audio/master.py
 $PY build_html.py
@@ -299,7 +302,7 @@ numpy 合成 120BPM 配乐（ducking）+ 音效（锚在 marks）─────
 当前 `视频制作/claude-codedeck-ep01/out/final.mp4`：
 
 ```
-91.767s · 1920×1080 · 30fps · H.264 + AAC 192k · 17.0 MB · 2753 帧（v2 画面）
+97.467s · 1920×1080 · 30fps · H.264 + AAC 192k · 17.0 MB · 2924 帧（v2 画面）
 -14.2 LUFS · 真峰值 -1.8 dBTP · 无削波（≥-0.1dBFS 采样 0 个）
 ```
 
@@ -380,4 +383,4 @@ $PY "$ROOT/.agents/skills/code-video-studio/scripts/audio_tools.py" \
 
 ---
 
-*最后更新：2026-11-22*
+*最后更新：2026-11-22（旁白放慢版 97.47s）*

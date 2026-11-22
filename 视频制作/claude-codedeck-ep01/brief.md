@@ -12,7 +12,7 @@
 - 产品能力描述：raw-notes.md 中关于 CodeDeck 的功能条目（全片不出现任何网址）
 规格：94.6 秒，1920×1080（16:9），30fps（2839 帧）
 品牌：暖米纸色 #F5F1E8、墨黑 #18181B、卡片白 #FFFFFF / 暖灰 #EBE4D5、CodeDeck 翠绿 #10B981（深墨绿 #047857）、Claude 陶土橙 #D97757、警示朱砂红 #D9462F；字体 Songti SC（主标题）+ PingFang SC（正文/字幕）+ SF Mono（代码与价格）。
-声音：**由 `音频训练/tts.py` 生成**（默认音色 cosy_plus，本人克隆音色，`--rate 1.55 --unit sentence --marks-out`），实测 6.3 字/秒、总长 93.44s；配乐为 120 BPM numpy 代码合成（人声自动闪避），音效全部锚在 marks 上；母带为线性增益 + lookahead 限制器（`audio/master.py`），成片 −14.2 LUFS / 真峰值 −1.6 dBFS。
+声音：**由 `音频训练/tts.py` 生成**（默认音色 qwen_v2_24，本人克隆音色，`--rate 1.36 --gap 0.28 --unit sentence --marks-out`），实测 5.28 字/秒、纯语音 94.88s、片长 97.48s；配乐为 120 BPM numpy 代码合成（人声自动闪避），音效全部锚在 marks 上；母带为线性增益 + lookahead 限制器（`audio/master.py`），成片 −14.2 LUFS / 真峰值 −2.4 dBFS。
 </inputs>
 
 <direction>
@@ -25,7 +25,7 @@
 </direction>
 
 <structure>
-时间轴由 `audio/vo_timeline.json` 驱动（tts.py 逐句 marks，`--rate 1.55`），画面/字幕/音效全部按它计算，换文案后整片自动重排。
+时间轴由 `audio/vo_timeline.json` 驱动（tts.py 逐句 marks，`--rate 1.36`），画面/字幕/音效全部按它计算，换文案后整片自动重排。
 
 镜头 1｜0.00–12.10s（// 01 · 物理破防）
 - 0.0s：「八百层风控警报 · BAN RATE 99.9%」红章重拍落下，抓人。
@@ -66,7 +66,7 @@
 <build>
 1. 画面：单文件离线 index.html，内嵌 Base64 的两张真实素材；DOM 排版 + Canvas 2D（手绘摩托、地图）+ SVG 光标。
 2. `window.render(t)` 纯时间函数；伪随机用 seeded hash；无 CSS transition/animation；`?play=1` 才开 rAF。
-3. 时间轴：`audio/make_vo.py` → `音频训练/tts.py`（cosy_plus, rate 1.55, sentence marks）→ `audio/vo_timeline.json`；`build_html.py` 把 SCN / SUBS / DURATION 注入页面。
+3. 时间轴：`audio/make_vo.py` → `音频训练/tts.py`（qwen_v2_24, rate 1.36, sentence marks）→ `audio/vo_timeline.json`；`build_html.py` 把 SCN / SUBS / DURATION 注入页面。
 4. 声音：`audio/synth_mix.py` 读同一份 timeline 摆配乐与音效 → `audio_tools.py normalize`。
 5. 渲染：`render.py index.html out/final.mp4 --size 1920x1080 --fps 30 --duration 94.636 --audio audio/mix_norm.wav`。
 6. 质检：关键帧静帧 → 整片 → analyze 16 宫格 + 360px 手机拼图 + 波形/频谱。
